@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sistemas de Información Administrativa — Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#7C3AED;--ac-dim:#1a1a1a;--ac2:#7C3AED;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F6F8FA;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 2rem 56px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,4rem);font-weight:700;line-height:1.05;margin-bottom:10px}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(.85rem,2vw,1.05rem);color:var(--muted);margin-bottom:32px}
+.stat{text-align:center;font-family:'JetBrains Mono',monospace}
+.stat-n{font-size:30px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.pres-section{position:relative;z-index:1;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pres-inner{max-width:920px;margin:0 auto;padding:48px 2rem}
+.pres-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ac);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.pres-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+.pres-lead{font-size:15px;color:var(--muted);line-height:1.85;max-width:800px;margin-bottom:14px}
+.units-section{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:52px 1.5rem 80px}
+.units-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.tools-strip{position:relative;z-index:1;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.tools-inner{max-width:920px;margin:0 auto;padding:28px 2rem;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>🏢</span>
+    SIA
+    <span class="sep">/</span>
+    <span class="dim">Sistemas de Información Administrativa</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="nav-badge">2025·2026</div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:12px">
+    <span style="flex:1;max-width:56px;height:1px;background:var(--border);display:block"></span>
+    Instituto Tecnológico de Negocios · Materia
+    <span style="flex:1;max-width:56px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <div style="width:72px;height:72px;border-radius:14px;background:#1a1a1a;border:2px solid #7C3AED44;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 22px;box-shadow:0 0 28px #7C3AED22">🏢</div>
+  <h1><span style="color:var(--muted);font-weight:300;display:block;font-size:.55em">Fundamentos · Clasificación · Bases de Datos · Comercio Electrónico</span><span style="color:var(--ac)">Sistemas de Información Administrativa</span></h1>
+  <div class="hero-sub">Fundamentos  ·  Clasificación  ·  Bases de Datos  ·  Comercio Electrónico</div>
+  <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:36px">
+    <div class="stat"><div class="stat-n" style="color:var(--ac)">4</div><div class="stat-l">Unidades</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">4</div><div class="stat-l">Disponibles</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--ac)">Python</div><div class="stat-l">Lenguaje</div></div>
+  </div>
+  <a href="#unidades" style="display:inline-flex;align-items:center;gap:8px;background:var(--ac);color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:12px 28px;border-radius:9px;text-decoration:none">Ver contenido →</a>
+</section>
+
+<div class="pres-section"><div class="pres-inner">
+  <div class="pres-tag">// Presentación de la asignatura</div>
+  <p class="pres-lead">Los <strong style="color:#7C3AED">Sistemas de Información Administrativa</strong> son indispensables para la planificación, la toma de decisiones y el control empresarial. La velocidad y exactitud con que los directivos reciben información sobre el funcionamiento de la empresa determinarán su éxito; por ello, es fundamental aprender a diseñar, aplicar y manejar tales sistemas.
+La asignatura está orientada a proporcionar una visión integral de la importancia vital de los SIA en las empresas — especialmente en PyMEs — y su interrelación con el proceso administrativo, abordando con claridad sus conceptos, estructuras, aplicaciones y tecnologías.</p>
+  
+  <div class="pres-tag" style="margin-top:28px">// Objetivo General</div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ac);background:#1a1a1a;border:1px solid #7C3AED44;min-width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">OG</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.7">Conocer y aplicar las <strong style="color:#7C3AED">técnicas y herramientas principales</strong> de los sistemas de información en el campo de la administración empresarial, desarrollando competencias para gestionar información en entornos organizacionales reales.</div>
+  </div>
+  
+  <div class="pres-tag" style="margin-top:28px">// Objetivos Específicos</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #7C3AED;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🧠</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Reconocer los conceptos generales de los SIA y los beneficios del uso de las tecnologías de información en diversos contextos organizacionales.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #818CF8;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🔄</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Identificar adecuadamente la estructura y tecnología de los Sistemas de Información Administrativa.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #10B981;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🧩</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Identificar los cambios tecnológicos en el campo de la administración en relación con los sistemas de información.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #F59E0B;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">📊</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Gestionar sistemas de información de una pequeña y mediana empresa (PyME).</div>
+    </div></div>
+</div></div>
+
+<div class="tools-strip"><div class="tools-inner">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);flex-shrink:0">// Herramientas</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Microsoft Access</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Microsoft Excel</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Power BI</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Navegador web moderno</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Google Workspace</div>
+  </div>
+</div></div>
+
+<section class="units-section" id="unidades">
+  <div class="sec-tag" style="margin-bottom:28px">// Contenido del curso — 4 unidades</div>
+  <div class="units-grid"><div style="background:var(--surface);border:1px solid #7C3AED44;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#7C3AED"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#7C3AED;opacity:.15">U1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#1a1a1a;color:#7C3AED;border:1px solid #7C3AED44">✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 1</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Principales Conceptos de Sistemas de Información</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Fundamentos de los Sistemas de Información: definiciones, relación con la empresa, características, elementos, ventajas, gestión de TI y conceptos generales de software de sistema, programación y aplicación.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">// archivos</span>
+          
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 9px;border-radius:20px">
+        2 clases · 2 talleres
+      </span>
+        </div>
+        
+      <a href="sia-u1-semana1.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 1 — Definiciones, SI y la Empresa</span>
+        <span style="font-size:10px;color:#7C3AED;background:#1a1a1a;border:1px solid #7C3AED44;padding:2px 7px;border-radius:3px">clase 1</span>
+      </a>
+      <a href="sia-u1-semana2.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 2 — Características, Elementos y Software</span>
+        <span style="font-size:10px;color:#7C3AED;background:#1a1a1a;border:1px solid #7C3AED44;padding:2px 7px;border-radius:3px">clase 2</span>
+      </a>
+        
+      <a href="sia-taller-semana1.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 1</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller 1</span>
+      </a>
+      <a href="sia-taller-semana2.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 2</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller 2</span>
+      </a>
+        
+      </div>
+    </div><div style="background:var(--surface);border:1px solid #818CF844;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#818CF8"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#818CF8;opacity:.15">U2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#1e1b4b;color:#818CF8;border:1px solid #818CF844">✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 2</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Clasificación de los Sistemas de Información</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Clasificación de los SI por niveles organizacionales (operativo, conocimiento, administrativo y estratégico) y por tipo de sistema: TPS, OAS, KMS, MIS, DSS, ESS/EIS, ERP y CRM. Actualización de tecnologías de información.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">// archivos</span>
+          
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 9px;border-radius:20px">
+        2 clases · 2 talleres
+      </span>
+        </div>
+        
+      <a href="sia-u2-semana3.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 3 — Niveles Organizacionales y TPS / OAS / KMS</span>
+        <span style="font-size:10px;color:#818CF8;background:#1e1b4b;border:1px solid #818CF844;padding:2px 7px;border-radius:3px">clase 1</span>
+      </a>
+      <a href="sia-u2-semana4.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 4 — MIS, DSS, ESS, ERP y CRM</span>
+        <span style="font-size:10px;color:#818CF8;background:#1e1b4b;border:1px solid #818CF844;padding:2px 7px;border-radius:3px">clase 2</span>
+      </a>
+        
+      <a href="sia-taller-semana3.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 3</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller 1</span>
+      </a>
+      <a href="sia-taller-semana4.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 4</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller 2</span>
+      </a>
+        
+      </div>
+    </div><div style="background:var(--surface);border:1px solid #10B98144;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#10B981"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#10B981;opacity:.15">U3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#052e16;color:#10B981;border:1px solid #10B98144">✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 3</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Bases de Datos y Administración de la Información</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Concepto, clasificación y ventajas de las bases de datos. Sistemas Gestores de Bases de Datos (SGBD). Administración de datos digitales vs. método tradicional. Modelado relacional, bases de datos en la web y seguridad de la información.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">// archivos</span>
+          
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 9px;border-radius:20px">
+        1 clase · 1 taller
+      </span>
+        </div>
+        
+      <a href="sia-u3-semana5.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 5 — Bases de Datos, SGBD y Modelado Relacional</span>
+        <span style="font-size:10px;color:#10B981;background:#052e16;border:1px solid #10B98144;padding:2px 7px;border-radius:3px">clase </span>
+      </a>
+        
+      <a href="sia-taller-semana5.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 5</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller </span>
+      </a>
+        
+      </div>
+    </div><div style="background:var(--surface);border:1px solid #F59E0B44;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#F59E0B"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#F59E0B;opacity:.15">U4</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44">✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 4</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Comercio Electrónico y los Sistemas de Información</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Comercio electrónico: concepto, características y tipos. Sistemas de pago, firmas digitales, encriptado y aspectos legales. Infraestructura de marketing digital, e-marketing, web marketing y propiedad intelectual en Internet.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">// archivos</span>
+          
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 9px;border-radius:20px">
+        1 clase · 1 taller
+      </span>
+        </div>
+        
+      <a href="sia-u4-semana6.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>📖</span>
+        <span style="flex:1">Semana 6 — E-Commerce, Seguridad y Marketing Digital</span>
+        <span style="font-size:10px;color:#F59E0B;background:#2d2208;border:1px solid #F59E0B44;padding:2px 7px;border-radius:3px">clase </span>
+      </a>
+        
+      <a href="sia-taller-semana6.html" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+        <span>🔐</span>
+        <span style="flex:1">Taller Semana 6</span>
+        <span style="font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);padding:2px 7px;border-radius:3px">taller </span>
+      </a>
+        
+      </div>
+    </div></div>
+</section>
+
+<footer>
+  Instituto Tecnológico de Negocios — Sistemas de Información Administrativa &nbsp;·&nbsp; <span>SIA</span>
+</footer>
+</body></html>
