@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taller S2 — SIA · Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#7C3AED;--ac-dim:#1a1a1a;--ac2:#7C3AED;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F6F8FA;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:52px 1.5rem 36px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px}
+.groups-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;cursor:pointer;transition:all .22s}
+.gcard:hover{transform:translateY(-3px)}
+.access-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:20px;text-align:center}
+.access-panel.vis{display:block}
+.key-input{background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;padding:10px 16px;border-radius:7px;width:220px;outline:none;letter-spacing:.12em;text-align:center;transition:border-color .2s}
+.key-input:focus{border-color:var(--ac)}
+.key-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:#FF7B72;margin-top:10px;display:none}
+.mission-panel{display:none}.mission-panel.vis{display:block}
+.nav-timer{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);display:flex;align-items:center;gap:6px}
+#td{font-size:16px;font-weight:700;min-width:58px}
+.tbtn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .2s}
+.tbtn:hover{color:var(--text)}.tbtn.on{background:#1a1a1a;color:var(--ac);border-color:#7C3AED44}
+.global-solution{display:none;background:var(--surface);border:1px solid rgba(74,222,128,.3);border-radius:var(--radius);padding:26px;margin-top:32px}
+.global-solution.vis{display:block}
+@media(max-width:640px){.groups-grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>🏢</span>
+    SIA <span class="sep">/</span><span class="dim">taller-semana-2</span>
+  </div>
+  <div class="nav-timer">⏱ <span id="td">75:00</span>
+    <button class="tbtn" id="tbtn" onclick="toggleTimer()">▶ iniciar</button>
+    <button class="tbtn" onclick="resetTimer()">↺</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+    <a class="nav-back" href="SIA.html">↩ Semana 2</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1;max-width:860px;margin:0 auto;padding:48px 1.5rem 36px;text-align:center">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+    Semana 2 · Taller grupal · SIA
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px">
+    <span style="color:var(--muted)">Del Dato a la Decisión — Simulación de Flujos de Información Empresarial</span>
+  </h1>
+  <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;line-height:1.7">Los grupos trabajan en parejas simulando el flujo real de información entre niveles organizacionales. El Grupo Emisor actúa como sistema operativo (TPS, CRM, SCM, SIG) y construye una tabla de datos brutos. El Grupo Receptor actúa como nivel gerencial o estratégico (MIS, ESS, CRM Marketing) y transforma esos datos en decisiones concretas.</p>
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1a1a1a;border:1px solid #7C3AED44;color:var(--ac)">12 Grupos</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1a1a1a;border:1px solid #7C3AED44;color:var(--ac)">75 minutos</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">// Selecciona tu grupo<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+  <div class="groups-grid">
+    <div class="gcard" onclick="sel(1)" style="border-color:#3B82F644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#3B82F6">G1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 1</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">TPS de Ventas — Registro Operativo</div>
+      </div><div class="gcard" onclick="sel(2)" style="border-color:#0EA5E944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#0EA5E9">G2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 2</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">MIS Gerencial — Análisis y Decisión</div>
+      </div><div class="gcard" onclick="sel(3)" style="border-color:#10B98144">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#10B981">G3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 3</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">CRM Operativo — Registro de Clientes</div>
+      </div><div class="gcard" onclick="sel(4)" style="border-color:#05966944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#059669">G4</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 4</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">CRM Estratégico — Segmentación y Acción Comercial</div>
+      </div><div class="gcard" onclick="sel(5)" style="border-color:#F59E0B44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#F59E0B">G5</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 5</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">SCM Almacén — Control de Inventario de Materias Primas</div>
+      </div><div class="gcard" onclick="sel(6)" style="border-color:#D9770644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#D97706">G6</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 6</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">SCM Compras — Gestión de Órdenes Urgentes</div>
+      </div><div class="gcard" onclick="sel(7)" style="border-color:#8B5CF644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#8B5CF6">G7</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 7</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">ERP — Control Financiero por Línea de Negocio</div>
+      </div><div class="gcard" onclick="sel(8)" style="border-color:#6D28D944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#6D28D9">G8</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 8</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">ESS — Directorio Ejecutivo y Decisión Estratégica</div>
+      </div><div class="gcard" onclick="sel(9)" style="border-color:#EC489944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EC4899">G9</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 9</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">SIG — Análisis Geográfico de Mercado</div>
+      </div><div class="gcard" onclick="sel(10)" style="border-color:#DB277744">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#DB2777">G10</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 10</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Gerencia de Expansión — Decisión de Nuevas Ubicaciones</div>
+      </div><div class="gcard" onclick="sel(11)" style="border-color:#0D948844">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#0D9488">G11</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 11</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">OAS — Registro de Tiempos de Procesos de Oficina</div>
+      </div><div class="gcard" onclick="sel(12)" style="border-color:#0F766E44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#0F766E">G12</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 12</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Gerencia de Procesos — Propuesta de Integración ERP</div>
+      </div>
+  </div>
+
+  
+    <div id="access-1" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#3B82F6;margin-bottom:6px">🔒 Grupo 1 — TPS de Ventas — Registro Operativo</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(1)">
+        <button style="background:#3B82F6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(1)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-1">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-2" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#0EA5E9;margin-bottom:6px">🔒 Grupo 2 — MIS Gerencial — Análisis y Decisión</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(2)">
+        <button style="background:#0EA5E9;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(2)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-2">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-3" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#10B981;margin-bottom:6px">🔒 Grupo 3 — CRM Operativo — Registro de Clientes</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(3)">
+        <button style="background:#10B981;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(3)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-3">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-4" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#059669;margin-bottom:6px">🔒 Grupo 4 — CRM Estratégico — Segmentación y Acción Comercial</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(4)">
+        <button style="background:#059669;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(4)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-4">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-5" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#F59E0B;margin-bottom:6px">🔒 Grupo 5 — SCM Almacén — Control de Inventario de Materias Primas</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(5)">
+        <button style="background:#F59E0B;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(5)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-5">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-6" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#D97706;margin-bottom:6px">🔒 Grupo 6 — SCM Compras — Gestión de Órdenes Urgentes</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-6" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(6)">
+        <button style="background:#D97706;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(6)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-6">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-7" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#8B5CF6;margin-bottom:6px">🔒 Grupo 7 — ERP — Control Financiero por Línea de Negocio</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-7" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(7)">
+        <button style="background:#8B5CF6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(7)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-7">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-8" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#6D28D9;margin-bottom:6px">🔒 Grupo 8 — ESS — Directorio Ejecutivo y Decisión Estratégica</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-8" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(8)">
+        <button style="background:#6D28D9;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(8)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-8">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-9" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EC4899;margin-bottom:6px">🔒 Grupo 9 — SIG — Análisis Geográfico de Mercado</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-9" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(9)">
+        <button style="background:#EC4899;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(9)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-9">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-10" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#DB2777;margin-bottom:6px">🔒 Grupo 10 — Gerencia de Expansión — Decisión de Nuevas Ubicaciones</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-10" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(10)">
+        <button style="background:#DB2777;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(10)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-10">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-11" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#0D9488;margin-bottom:6px">🔒 Grupo 11 — OAS — Registro de Tiempos de Procesos de Oficina</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-11" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(11)">
+        <button style="background:#0D9488;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(11)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-11">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-12" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#0F766E;margin-bottom:6px">🔒 Grupo 12 — Gerencia de Procesos — Propuesta de Integración ERP</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-12" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(12)">
+        <button style="background:#0F766E;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(12)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-12">⚠ Clave incorrecta</div>
+    </div>
+  
+    <div id="mission-1" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#0c1d3f;border:1px solid #3B82F644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#3B82F6;flex-shrink:0">G1</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 1 — TPS de Ventas — Registro Operativo</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#3B82F6">Sistema de Procesamiento de Transacciones (TPS)</strong> del departamento de ventas de una cadena comercial con 6 sucursales en Guayaquil. Tu misión es registrar con precisión el estado operativo de hoy — ventas, stock y alertas. Estos datos serán analizados por el Grupo 2 que actuará como la gerencia. <strong style="color:#3B82F6">Fase 1 (20 min):</strong> Construye la tabla operativa con datos verosímiles. Incluye intencionalmente <strong style="color:#3B82F6">2 sucursales con quiebre de stock o ventas muy bajas</strong> para que el grupo receptor pueda detectarlas. <strong style="color:#3B82F6">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 2. <strong style="color:#3B82F6">Fase 4 (3 min):</strong> Presenta al plenario: <em style="font-style:italic;color:#8B949E">"Nuestra tabla mostraba este estado operativo..."</em></div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#3B82F6;font-weight:700">TPS de Ventas — Capturador de datos operativos</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#3B82F6;font-weight:700">Grupo 1 (Emisor) ↔ Grupo 2 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#3B82F6;font-weight:700">TPS — Transaction Processing System</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#3B82F6;font-weight:700">Nivel Operativo</span></div><div><span style="color:var(--muted)">Filas mínimas en la tabla:</span> <span style="color:#3B82F6;font-weight:700">6 sucursales con al menos 5 columnas cada una</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#3B82F6;font-weight:700">Sucursal, Producto estrella, Precio unitario, Unidades en stock, Unidades vendidas hoy, Estado</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #3B82F644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#0c1d3f;border-bottom:1px solid #3B82F644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#3B82F6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">Construye la tabla operativa:</strong> Diseña una tabla con el registro diario de ventas de las 6 sucursales. Incluye: código de sucursal, producto más vendido del día, precio unitario, unidades en stock al inicio del día, unidades vendidas hoy y una columna de Estado (Normal / Alerta / Quiebre). Recuerda incluir al menos 2 sucursales problemáticas.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">Justifica los datos problemáticos:</strong> Para las 2 sucursales con alerta, describe brevemente qué situación real podría explicar ese estado (falta de reposición, día festivo local, producto defectuoso, etc.).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">Reflexión sobre el rol del TPS:</strong> ¿Por qué el TPS no debe tomar decisiones sobre lo que registra? ¿Qué pasaría si el cajero pudiera modificar los datos de stock manualmente sin autorización?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">Preparación para el plenario:</strong> Resume en 3 líneas el estado general que muestra tu tabla para presentarlo en la Fase 4 ante toda la clase.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Tabla operativa completa</strong> con 6 sucursales y mínimo 5 columnas (física o digital)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Justificación</strong> de las 2 situaciones de alerta incluidas</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Reflexión escrita</strong> sobre el rol del TPS (pregunta 3)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">El docente verifica que la tabla tenga datos coherentes con un registro TPS real: valores numéricos, fechas, estados definidos. Las 2 alertas deben estar claramente identificadas con columna Estado en rojo o con indicador visible. La reflexión debe mencionar integridad del dato, trazabilidad y separación de roles (quien registra no decide). Revisar que la presentación del plenario describa el estado operativo sin emitir juicios de decisión — eso corresponde al Grupo 2.</div>
+      </div>
+    </div>
+    <div id="mission-2" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #0EA5E944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#0EA5E9;flex-shrink:0">G2</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 2 — MIS Gerencial — Análisis y Decisión</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#0EA5E9">Sistema de Información Gerencial (MIS)</strong> y el equipo de gerentes de la cadena comercial. Recibirás la tabla operativa del Grupo 1 (TPS de ventas) y tu misión es transformar esos datos brutos en un <strong style="color:#0EA5E9">Informe de Decisiones</strong> con acciones concretas para corregir los problemas detectados. <strong style="color:#0EA5E9">Fase 3 (25 min):</strong> Analiza la tabla recibida, identifica alertas y elabora el informe de decisiones. <strong style="color:#0EA5E9">Fase 4 (3 min):</strong> Presenta al plenario: <em style="font-style:italic;color:#8B949E">"Al analizar sus datos, detectamos X problema y tomamos Y decisiones..."</em></div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#0EA5E9;font-weight:700">MIS Gerencial — Análisis y toma de decisiones tácticas</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#0EA5E9;font-weight:700">Grupo 1 (Emisor) ↔ Grupo 2 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#0EA5E9;font-weight:700">MIS — Management Information System</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#0EA5E9;font-weight:700">Nivel Administrativo</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#0EA5E9;font-weight:700">Grupo 1 (TPS de Ventas)</span></div><div><span style="color:var(--muted)">Herramienta de salida:</span> <span style="color:#0EA5E9;font-weight:700">Reporte semáforo + Informe de Decisiones</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #0EA5E944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #0EA5E944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#0EA5E9">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0EA5E9;border:1px solid #0EA5E944;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0EA5E9">Sistema de semáforo:</strong> Clasifica cada sucursal de la tabla recibida en Verde (ventas normales, stock suficiente), Amarillo (ventas bajas o stock en mínimo) o Rojo (quiebre de stock o ventas críticas). Presenta un cuadro resumen con los tres colores.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0EA5E9;border:1px solid #0EA5E944;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0EA5E9">Diagnóstico de problemas:</strong> Para cada sucursal en Amarillo o Rojo, identifica qué problema específico tiene (quiebre de stock, ventas por debajo del promedio, producto con baja rotación) y cuál es la causa más probable.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0EA5E9;border:1px solid #0EA5E944;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0EA5E9">Plan de decisiones:</strong> Para cada problema identificado, define una acción concreta: reasignar stock entre sucursales, ajustar metas del mes, llamar al gerente de sucursal, lanzar una promoción de urgencia, etc. Indica quién debe ejecutar cada acción y en qué plazo.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0EA5E9;border:1px solid #0EA5E944;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0EA5E9">Informe ejecutivo:</strong> Redacta un párrafo de resumen ejecutivo (5-7 líneas) que presentarías al director general con los hallazgos clave y las decisiones tomadas.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0EA5E9;border:1px solid #0EA5E944;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0EA5E9">Reflexión sobre el rol del MIS:</strong> ¿En qué se diferencia fundamentalmente lo que hizo el Grupo 1 (TPS) de lo que hizo tu grupo (MIS)? ¿Qué pasaría si el gerente tuviera que revisar las 6 sucursales transacción por transacción en lugar de recibir tu reporte?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0EA5E9">Cuadro semáforo</strong> con las 6 sucursales clasificadas (Verde / Amarillo / Rojo)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0EA5E9">Diagnóstico</strong> de cada problema con causa probable</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0EA5E9">Plan de decisiones</strong> con acciones concretas, responsable y plazo</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0EA5E9">Resumen ejecutivo</strong> de 5-7 líneas</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0EA5E9">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Verificar que el semáforo corresponda a los datos recibidos del Grupo 1 (no inventados). El plan de decisiones debe ser específico y ejecutable — penalizar respuestas genéricas. El resumen ejecutivo debe omitir datos crudos y presentar síntesis accionable. La reflexión debe distinguir claramente: TPS registra hechos individuales en tiempo real; MIS agrega, resume y presenta patrones para decisión gerencial.</div>
+      </div>
+    </div>
+    <div id="mission-3" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#052e16;border:1px solid #10B98144;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#10B981;flex-shrink:0">G3</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 3 — CRM Operativo — Registro de Clientes</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#10B981">CRM Operativo</strong> del equipo de ventas de una empresa B2B de distribución en Guayaquil. Tu misión es construir la tabla de estado actual de la cartera de clientes empresariales con toda la información relevante de cada cuenta. Estos datos serán usados por el Grupo 4 para diseñar estrategias de marketing y retención. <strong style="color:#10B981">Fase 1 (20 min):</strong> Construye la tabla con 8 clientes empresariales. Incluye intencionalmente <strong style="color:#10B981">clientes VIP desatendidos</strong> (alto valor pero sin contacto reciente) y <strong style="color:#10B981">clientes inactivos</strong> (sin compra en más de 90 días). <strong style="color:#10B981">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 4.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#10B981;font-weight:700">CRM Operativo — Registro y seguimiento de clientes</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#10B981;font-weight:700">Grupo 3 (Emisor) ↔ Grupo 4 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#10B981;font-weight:700">CRM — Customer Relationship Management (módulo operativo)</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#10B981;font-weight:700">Nivel Operativo / Conocimiento</span></div><div><span style="color:var(--muted)">Filas mínimas:</span> <span style="color:#10B981;font-weight:700">8 clientes empresariales</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#10B981;font-weight:700">ID Cliente, Nombre empresa, Fecha última compra, Monto acumulado anual ($), Reclamos abiertos, Canal de contacto preferido, Ejecutivo asignado, Estado</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #10B98144;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#052e16;border-bottom:1px solid #10B98144">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#10B981">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">Construye la tabla de cartera de clientes:</strong> Diseña una tabla con 8 clientes empresariales con los campos indicados. Asegúrate de incluir: al menos 2 clientes VIP (monto anual alto) que no han comprado en más de 60 días, y al menos 2 clientes completamente inactivos (sin compra en más de 90 días).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">Señala los riesgos ocultos:</strong> Identifica cuáles de tus 8 clientes representan mayor riesgo de pérdida y por qué. Considera: tiempo sin compra, reclamos abiertos sin resolver, y si el ejecutivo asignado tiene sobrecarga de cuentas.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">Reflexión sobre el CRM operativo:</strong> ¿Qué problema resuelve el CRM en comparación con gestionar los clientes en una hoja de Excel sin estructura? ¿Qué información se pierde cuando el vendedor que atiende a un cliente renuncia sin dejar registro?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">Preparación para el plenario:</strong> Resume en 3 líneas el estado de la cartera que muestra tu tabla para presentarlo en la Fase 4.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Tabla de cartera</strong> con 8 clientes y todos los campos completos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Identificación de riesgos</strong> con justificación por cliente</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Reflexión escrita</strong> sobre el valor del CRM (pregunta 3)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Verificar coherencia de los datos: fechas realistas, montos acordes al tipo de empresa, reclamos con número. Los 2 clientes VIP desatendidos deben tener monto alto (>$5.000 anuales) y última compra hace más de 60 días. Los 2 inactivos sin compra en >90 días. La reflexión debe mencionar: centralización de la información, continuidad ante rotación de personal, y visibilidad 360° del cliente para todo el equipo.</div>
+      </div>
+    </div>
+    <div id="mission-4" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #05966944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#059669;flex-shrink:0">G4</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 4 — CRM Estratégico — Segmentación y Acción Comercial</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#059669">equipo de Marketing y CRM Estratégico</strong>. Recibirás la tabla de cartera del Grupo 3 y tu misión es segmentar los clientes, detectar patrones y diseñar acciones comerciales diferenciadas para cada segmento. Aquí es donde los datos del CRM se convierten en estrategia de negocio. <strong style="color:#059669">Fase 3 (25 min):</strong> Analiza la tabla recibida, segmenta la cartera y diseña las acciones para cada grupo. <strong style="color:#059669">Fase 4 (3 min):</strong> Presenta al plenario tus hallazgos y propuestas.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#059669;font-weight:700">CRM Estratégico / Marketing — Segmentación y acciones comerciales</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#059669;font-weight:700">Grupo 3 (Emisor) ↔ Grupo 4 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#059669;font-weight:700">CRM — módulo de Marketing y Análisis</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#059669;font-weight:700">Nivel Administrativo / Estratégico</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#059669;font-weight:700">Grupo 3 (CRM Operativo)</span></div><div><span style="color:var(--muted)">Segmentos a construir:</span> <span style="color:#059669;font-weight:700">Clientes VIP · Clientes en Riesgo · Prospectos Dormidos</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #05966944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #05966944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#059669">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#059669;border:1px solid #05966944;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#059669">Segmentación de la cartera:</strong> Clasifica los 8 clientes de la tabla recibida en tres segmentos: (A) Clientes VIP — alto valor y activos; (B) Clientes en Riesgo — alto valor pero inactivos o con reclamos; (C) Prospectos Dormidos — bajo valor y sin actividad reciente. Justifica la clasificación de cada cliente.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#059669;border:1px solid #05966944;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#059669">Diseño de acciones diferenciadas:</strong> Para cada segmento diseña una acción comercial específica. Para VIP: beneficio de fidelización. Para En Riesgo: acción de rescate urgente. Para Dormidos: campaña de reactivación. Cada acción debe incluir: qué se ofrece, por qué canal, en qué plazo y quién es el responsable de ejecutarla.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#059669;border:1px solid #05966944;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#059669">Estimación de impacto:</strong> Si recuperas solo el 30% de los clientes en riesgo, ¿cuánto ingreso adicional estimado podría generar para la empresa en los próximos 3 meses? Calcula con los montos anuales de la tabla y ajusta al trimestre.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#059669;border:1px solid #05966944;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#059669">Reflexión:</strong> ¿Cuál es la diferencia entre lo que hizo el Grupo 3 (registrar) y lo que hizo tu grupo (analizar y decidir)? ¿En qué nivel organizacional opera cada uno según la clasificación de sistemas vista en clase?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#059669">Tabla de segmentación</strong> con los 8 clientes clasificados y justificación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#059669">Plan de acciones</strong> para cada segmento con canal, plazo y responsable</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#059669">Estimación de impacto económico</strong> del escenario de recuperación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#059669">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">La segmentación debe basarse en los datos reales recibidos del Grupo 3, no en criterios inventados. Las acciones deben ser diferenciadas, específicas y coherentes con el segmento. La estimación de impacto debe tener cálculo explícito con los números de la tabla. La reflexión debe identificar: G3 opera a nivel operativo/conocimiento (registra y mantiene datos), G4 opera a nivel administrativo/estratégico (analiza y decide).</div>
+      </div>
+    </div>
+    <div id="mission-5" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#2d2208;border:1px solid #F59E0B44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#F59E0B;flex-shrink:0">G5</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 5 — SCM Almacén — Control de Inventario de Materias Primas</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#F59E0B">módulo de Inventario de Materias Primas del SCM</strong> de una empresa manufacturera de alimentos procesados en Guayaquil. Tu misión es registrar con precisión el estado actual del almacén de insumos. Estos datos serán analizados por el Grupo 6 que decidirá las compras urgentes para evitar un paro de planta. <strong style="color:#F59E0B">Fase 1 (20 min):</strong> Construye la tabla con 6 insumos clave. Incluye intencionalmente <strong style="color:#F59E0B">al menos 2 insumos a punto de agotarse</strong> antes de que llegue el próximo lote del proveedor. <strong style="color:#F59E0B">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 6.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#F59E0B;font-weight:700">SCM Almacén — Registro de inventario de materia prima</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#F59E0B;font-weight:700">Grupo 5 (Emisor) ↔ Grupo 6 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#F59E0B;font-weight:700">SCM — Supply Chain Management (módulo de almacén)</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#F59E0B;font-weight:700">Nivel Operativo</span></div><div><span style="color:var(--muted)">Filas mínimas:</span> <span style="color:#F59E0B;font-weight:700">6 insumos de producción</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#F59E0B;font-weight:700">Código insumo, Nombre insumo, Stock actual (kg/unidades), Stock mínimo de seguridad, Consumo diario promedio, Lead time proveedor (días), Días de stock disponible, Estado</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #F59E0B44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#2d2208;border-bottom:1px solid #F59E0B44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F59E0B">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">Construye la tabla de inventario:</strong> Diseña la tabla con 6 insumos clave del proceso productivo (ej. harina, azúcar, envases, colorantes, aceite, sal). Para cada uno calcula los días de stock disponible: Días disponibles = Stock actual ÷ Consumo diario. Incluye 2 insumos donde los días disponibles sean menores al lead time del proveedor — eso es una alerta crítica de paro de planta.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">Identifica el riesgo de paro:</strong> Para los 2 insumos críticos, calcula exactamente cuántas unidades adicionales se necesitan pedir hoy para no generar paro de planta, considerando el lead time y el consumo diario.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">Reflexión sobre el SCM de almacén:</strong> ¿Qué problema operativo concreto resuelve un sistema SCM de inventario en comparación con llevar el control de insumos en un cuaderno físico o una hoja de Excel sin alertas automáticas?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">Preparación para el plenario:</strong> Resume en 3 líneas el estado del almacén que muestra tu tabla.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Tabla de inventario</strong> con 6 insumos y cálculo de días disponibles</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Cálculo de cantidad a pedir</strong> para los 2 insumos críticos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Reflexión escrita</strong> sobre el valor del SCM de almacén</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Verificar que los días disponibles estén calculados correctamente (Stock ÷ Consumo diario). Los 2 insumos críticos deben tener días disponibles < lead time. El cálculo de cantidad a pedir debe seguir la fórmula o una equivalente. La reflexión debe mencionar: alertas automáticas, visibilidad en tiempo real, y prevención del paro de producción como valor central del SCM.</div>
+      </div>
+    </div>
+    <div id="mission-6" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #D9770644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#D97706;flex-shrink:0">G6</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 6 — SCM Compras — Gestión de Órdenes Urgentes</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como la <strong style="color:#D97706">Gerencia de Compras del SCM</strong>, el cerebro logístico que transforma las alertas del almacén en órdenes de compra inteligentes. Recibirás la tabla de inventario del Grupo 5 y deberás identificar qué insumos generarán paro de planta, emitir las órdenes de compra prioritarias y coordinar la logística de recepción. <strong style="color:#D97706">Fase 3 (25 min):</strong> Analiza la tabla recibida, prioriza los insumos críticos y elabora el plan de compras urgentes. <strong style="color:#D97706">Fase 4 (3 min):</strong> Presenta al plenario tu diagnóstico y plan de acción.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#D97706;font-weight:700">SCM Gerencia de Compras — Análisis y emisión de órdenes de compra</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#D97706;font-weight:700">Grupo 5 (Emisor) ↔ Grupo 6 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#D97706;font-weight:700">SCM — módulo de Compras y Proveedores</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#D97706;font-weight:700">Nivel Administrativo</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#D97706;font-weight:700">Grupo 5 (SCM Almacén)</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #D9770644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #D9770644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#D97706">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#D97706;border:1px solid #D9770644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#D97706">Análisis de criticidad:</strong> Con la tabla recibida, calcula para cada insumo el indicador de riesgo: ¿cuántos días antes del paro de planta se necesita emitir la orden? (Días de margen = Días de stock disponible − Lead time del proveedor). Clasifica cada insumo en: Crítico (margen negativo), Urgente (margen 0-3 días) o Normal (margen > 3 días).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#D97706;border:1px solid #D9770644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#D97706">Plan de órdenes de compra:</strong> Para cada insumo Crítico o Urgente, emite una orden de compra formal con: nombre del insumo, cantidad a pedir (calcula con la fórmula del Grupo 5 o justifica tu propia estimación), proveedor asignado (puedes inventar un nombre realista), fecha máxima de entrega requerida, y si se necesita transporte urgente (flete aéreo o transporte expreso desde el proveedor).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#D97706;border:1px solid #D9770644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#D97706">Impacto económico del paro evitado:</strong> Estima el costo que tendría 1 día de paro de planta para la empresa. Considera: salarios del personal que no produce (supón 50 empleados a $500 mensuales), costo de oportunidad de ventas no realizadas (supón 200 unidades/día a $15 c/u), y penalidades con clientes por entrega tardía (supón $1.000 por pedido afectado). ¿Cuánto ahorra la empresa al evitar el paro con tu plan de compras?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#D97706;border:1px solid #D9770644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#D97706">Reflexión:</strong> ¿Por qué el SCM de compras necesita recibir los datos del almacén en tiempo real y no en un reporte semanal? ¿Qué haría diferente si los datos del Grupo 5 hubieran llegado con 3 días de retraso?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#D97706">Tabla de criticidad</strong> con clasificación Crítico / Urgente / Normal por insumo</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#D97706">Órdenes de compra</strong> para insumos críticos y urgentes con todos los campos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#D97706">Cálculo del costo del paro</strong> evitado con procedimiento explícito</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#D97706">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">La clasificación de criticidad debe derivarse directamente de los datos del Grupo 5 (días disponibles − lead time). Las órdenes de compra deben tener cantidades calculadas, no estimadas al azar. El cálculo del paro: 50 emp × ($500/22 días) = $1.136/día en salarios + 200 × $15 = $3.000 en ventas + $1.000 penalidades = ~$5.136 por día de paro. La reflexión debe argumentar que la cadena de suministro opera en tiempo real — un retraso de 3 días en la información puede representar exactamente 3 días de paro adicional.</div>
+      </div>
+    </div>
+    <div id="mission-7" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1e1340;border:1px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#8B5CF6;flex-shrink:0">G7</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 7 — ERP — Control Financiero por Línea de Negocio</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#8B5CF6">módulo de Control Financiero del ERP</strong> de una empresa con 5 líneas de negocio. Tu misión es construir la tabla de desempeño mensual con los indicadores financieros clave de cada línea. Estos datos serán presentados al directorio ejecutivo a través del Grupo 8 que actuará como el ESS (Executive Support System). <strong style="color:#8B5CF6">Fase 1 (20 min):</strong> Construye la tabla financiera con datos verosímiles. Incluye <strong style="color:#8B5CF6">una línea de negocio con pérdidas sostenidas</strong> y una con <strong style="color:#8B5CF6">márgenes excepcionalmente altos</strong>. <strong style="color:#8B5CF6">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 8.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#8B5CF6;font-weight:700">ERP Control Financiero — Consolidación de datos de desempeño</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#8B5CF6;font-weight:700">Grupo 7 (Emisor) ↔ Grupo 8 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#8B5CF6;font-weight:700">ERP — módulo financiero y de control de gestión</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#8B5CF6;font-weight:700">Nivel Administrativo</span></div><div><span style="color:var(--muted)">Líneas de negocio:</span> <span style="color:#8B5CF6;font-weight:700">5 (ej. Retail, Exportaciones, Servicios, Manufactura, Franquicias)</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#8B5CF6;font-weight:700">Línea de negocio, Ingresos mensuales ($), Costos operacionales ($), Margen de ganancia (%), Rotación de personal (%), Tendencia (↑↓=)</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #8B5CF644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1e1340;border-bottom:1px solid #8B5CF644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8B5CF6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">Construye la tabla de desempeño:</strong> Diseña la tabla con las 5 líneas de negocio. Calcula el Margen de ganancia = ((Ingresos − Costos) / Ingresos) × 100. Asegúrate de que una línea tenga margen negativo (pérdidas) y una tenga margen superior al 30% (muy rentable). Las demás pueden estar en valores intermedios realistas.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">Agrega el indicador de tendencia:</strong> Para cada línea, añade una flecha de tendencia basándote en esta lógica: ↑ si el margen mejora respecto al mes anterior (inventa datos del mes anterior), ↓ si empeora, = si se mantiene estable. La línea con pérdidas debe tener tendencia ↓ por al menos 2 meses consecutivos.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">Reflexión sobre el ERP:</strong> ¿Por qué es importante que el módulo financiero del ERP consolide datos de todas las líneas de negocio en un solo sistema en lugar de que cada gerente de línea mantenga sus propios archivos Excel independientes?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">Preparación para el plenario:</strong> Resume en 3 líneas el estado financiero consolidado de las 5 líneas para presentarlo en la Fase 4.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Tabla de desempeño financiero</strong> con 5 líneas, márgenes calculados y tendencias</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Datos del mes anterior</strong> (inventados) que justifican las tendencias</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Reflexión escrita</strong> sobre el valor del ERP financiero centralizado</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Los márgenes deben estar correctamente calculados. La línea deficitaria debe tener margen negativo Y tendencia ↓ por ≥2 meses. La línea más rentable debe tener margen >30%. La reflexión debe mencionar: consolidación en tiempo real, eliminación de datos duplicados o inconsistentes, y auditoría centralizada como ventajas del ERP frente a Excel descentralizado.</div>
+      </div>
+    </div>
+    <div id="mission-8" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #6D28D944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#6D28D9;flex-shrink:0">G8</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 8 — ESS — Directorio Ejecutivo y Decisión Estratégica</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#6D28D9">Directorio Ejecutivo</strong> apoyado por un <strong style="color:#6D28D9">ESS (Executive Support System)</strong>. Recibirás el resumen financiero del Grupo 7 y deberás tomar decisiones de nivel estratégico: cerrar, reestructurar, vender o expandir líneas de negocio. Estas son decisiones que afectan el rumbo de la empresa a 1-3 años. <strong style="color:#6D28D9">Fase 3 (25 min):</strong> Analiza la tabla, cruza con contexto externo y elabora el informe de decisiones estratégicas. <strong style="color:#6D28D9">Fase 4 (3 min):</strong> Presenta al plenario como si fueras el CEO reportando al directorio.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#6D28D9;font-weight:700">ESS / Directorio Ejecutivo — Decisiones estratégicas</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#6D28D9;font-weight:700">Grupo 7 (Emisor) ↔ Grupo 8 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#6D28D9;font-weight:700">ESS — Executive Support System</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#6D28D9;font-weight:700">Nivel Estratégico</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#6D28D9;font-weight:700">Grupo 7 (ERP Financiero)</span></div><div><span style="color:var(--muted)">Contexto externo adicional (para cruzar con los datos):</span> <span style="color:#6D28D9;font-weight:700">Inflación Ecuador 3.2%, dólar estable, crecimiento del sector servicios 7% anual, restricciones de importación en manufactura</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #6D28D944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #6D28D944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#6D28D9">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6D28D9;border:1px solid #6D28D944;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#6D28D9">Diagnóstico estratégico:</strong> Analiza la tabla recibida e identifica: cuál línea de negocio es el motor de la empresa (mayor margen + tendencia ↑), cuál es la amenaza inmediata (pérdidas + tendencia ↓) y cuáles están en zona de incertidumbre. Cruza estos datos con el contexto externo proporcionado.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6D28D9;border:1px solid #6D28D944;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#6D28D9">Decisión sobre la línea deficitaria:</strong> Para la línea con pérdidas sostenidas, evalúa 3 opciones: (A) cerrar la línea, (B) reestructurarla reduciendo costos, (C) venderla o buscar un socio estratégico. Argumenta cuál opción recomendarías al directorio y por qué, considerando el contexto económico externo.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6D28D9;border:1px solid #6D28D944;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#6D28D9">Plan de expansión:</strong> Para la línea más rentable, diseña una propuesta de expansión a 18 meses: ¿en qué invertirías?, ¿abrirías nuevas ciudades o países?, ¿contratarías más personal?, ¿lanzarías nuevos productos? Estima el retorno esperado con los datos de margen actuales.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6D28D9;border:1px solid #6D28D944;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#6D28D9">Reflexión:</strong> ¿Por qué las decisiones del ESS/Directorio son "no estructuradas" mientras que las del MIS (Grupo 2) son "semi-estructuradas"? ¿Qué información adicional — que no está en la tabla — necesitaría el directorio para tomar la mejor decisión?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#6D28D9">Diagnóstico estratégico</strong> con clasificación de las 5 líneas y cruce con contexto externo</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#6D28D9">Recomendación fundamentada</strong> para la línea deficitaria (cerrar / reestructurar / vender)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#6D28D9">Propuesta de expansión</strong> para la línea más rentable con estimación de retorno</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#6D28D9">Presentación de 3 minutos</strong> como CEO ante la clase (el "directorio")</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">El diagnóstico debe cruzar datos internos con el contexto externo dado. La decisión sobre la línea deficitaria debe estar argumentada más allá del número puro (considerar empleo, activos, reputación). La propuesta de expansión debe tener cálculo de retorno estimado. La reflexión debe distinguir: MIS → decisiones con criterios definidos (semáforo, umbral); ESS → sin fórmula fija, requiere juicio, experiencia y contexto que trasciende los datos internos.</div>
+      </div>
+    </div>
+    <div id="mission-9" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EC489944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EC4899;flex-shrink:0">G9</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 9 — SIG — Análisis Geográfico de Mercado</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#EC4899">Sistema de Información Geográfica (SIG)</strong> del área de expansión comercial. Tu misión es construir una tabla de análisis de 6 sectores urbanos de Guayaquil con sus atributos geográficos y comerciales. Estos datos serán usados por el Grupo 10 para decidir dónde abrir nuevas agencias o definir nuevas rutas de reparto. <strong style="color:#EC4899">Fase 1 (20 min):</strong> Construye la tabla con 6 sectores urbanos reales de Guayaquil. Incluye intencionalmente <strong style="color:#EC4899">zonas saturadas</strong> (alta competencia, poca oportunidad) y <strong style="color:#EC4899">zonas desatendidas</strong> (alta demanda potencial, baja cobertura). <strong style="color:#EC4899">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 10.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#EC4899;font-weight:700">SIG — Captura y análisis de datos geoespaciales</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#EC4899;font-weight:700">Grupo 9 (Emisor) ↔ Grupo 10 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#EC4899;font-weight:700">SIG — Sistema de Información Geográfica</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#EC4899;font-weight:700">Nivel del Conocimiento / Administrativo</span></div><div><span style="color:var(--muted)">Sectores sugeridos de Guayaquil:</span> <span style="color:#EC4899;font-weight:700">Urdesa, Samborondón, Alborada, Sur de Guayaquil, Kennedy, Daule</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#EC4899;font-weight:700">Sector / Zona, Densidad poblacional estimada, N° de locales propios actuales, N° de competidores en la zona, Ventas actuales del sector ($), Cobertura de entregas (%), Índice de oportunidad (calcula tú)</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EC489944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EC489944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EC4899">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EC4899">Construye la tabla de análisis geográfico:</strong> Diseña la tabla con los 6 sectores. Para el Índice de Oportunidad, crea tu propia fórmula simple (ej. Oportunidad = Densidad − Competidores × 10, o usa una escala 1-10 basada en tu análisis). Incluye al menos 2 zonas saturadas (muchos competidores, ventas ya altas) y 2 zonas desatendidas (poca competencia, cobertura baja, potencial alto).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EC4899">Identifica el patrón geográfico:</strong> ¿Existe algún patrón en tu tabla? Por ejemplo: ¿las zonas con mayor densidad poblacional tienen más competencia? ¿Las zonas con cobertura baja coinciden con las de menores ventas actuales? Describe qué historia cuentan los datos cuando se ven juntos.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EC4899">Reflexión sobre el SIG:</strong> ¿Qué información adicional podría agregar una capa geográfica real a esta tabla para mejorar la decisión del Grupo 10? (Ej. datos de tráfico, nivel socioeconómico, proyectos de expansión urbana del municipio, etc.)</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EC4899">Preparación para el plenario:</strong> Resume en 3 líneas el mapa de oportunidades que muestra tu tabla.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EC4899">Tabla geográfica</strong> con 6 sectores, todos los campos y fórmula de Índice de Oportunidad explicada</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EC4899">Análisis de patrones</strong> geográficos detectados (pregunta 2)</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EC4899">Reflexión</strong> sobre capas de datos adicionales para el SIG</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EC4899">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">La tabla debe incluir zonas reales de Guayaquil con datos verosímiles. El Índice de Oportunidad debe tener una fórmula explícita y aplicada de forma consistente. El análisis de patrones debe ir más allá de describir cada fila — debe buscar correlaciones entre columnas. La reflexión debe mencionar al menos 3 tipos de capas adicionales que mejorarían el análisis (tráfico, NSE, proyecciones demográficas, mapas de competencia en tiempo real).</div>
+      </div>
+    </div>
+    <div id="mission-10" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #DB277744;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#DB2777;flex-shrink:0">G10</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 10 — Gerencia de Expansión — Decisión de Nuevas Ubicaciones</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como la <strong style="color:#DB2777">Gerencia de Desarrollo de Negocio</strong>. Recibirás la tabla de análisis geográfico del Grupo 9 y deberás seleccionar las 2 mejores ubicaciones para abrir nuevas agencias o definir nuevas rutas de reparto, justificando tu decisión con los datos del SIG recibido. <strong style="color:#DB2777">Fase 3 (25 min):</strong> Analiza la tabla, descarta zonas no viables y selecciona las 2 ubicaciones óptimas con plan de implementación. <strong style="color:#DB2777">Fase 4 (3 min):</strong> Presenta la decisión de expansión como si fueras el gerente de desarrollo ante el directorio.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#DB2777;font-weight:700">Gerencia de Desarrollo de Negocio — Decisión de expansión territorial</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#DB2777;font-weight:700">Grupo 9 (Emisor) ↔ Grupo 10 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#DB2777;font-weight:700">DSS — Decision Support System apoyado en datos SIG</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#DB2777;font-weight:700">Nivel Administrativo / Estratégico</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#DB2777;font-weight:700">Grupo 9 (SIG Geográfico)</span></div><div><span style="color:var(--muted)">Restricciones de decisión:</span> <span style="color:#DB2777;font-weight:700">Presupuesto para máximo 2 nuevas ubicaciones, preferencia por zonas con Índice de Oportunidad alto y competencia baja</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #DB277744;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #DB277744">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#DB2777">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#DB2777;border:1px solid #DB277744;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#DB2777">Análisis y descarte:</strong> Ordena los 6 sectores de la tabla de mayor a menor según el Índice de Oportunidad. Descarta inmediatamente las zonas saturadas (justifica por qué no son viables). ¿Cuántas zonas quedan en análisis después del descarte?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#DB2777;border:1px solid #DB277744;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#DB2777">Selección de las 2 ubicaciones óptimas:</strong> De las zonas no descartadas, selecciona las 2 mejores. Justifica cada elección con al menos 3 criterios de la tabla. Especifica: en qué parte del sector abrirías (calle principal, centro comercial, zona residencial) y por qué.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#DB2777;border:1px solid #DB277744;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#DB2777">Plan de implementación:</strong> Para cada una de las 2 ubicaciones seleccionadas, diseña un plan básico de 90 días: mes 1 (búsqueda de local y permisos), mes 2 (adecuación y contratación), mes 3 (apertura y campaña de lanzamiento). Estima el costo aproximado de apertura.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#DB2777;border:1px solid #DB277744;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#DB2777">Reflexión:</strong> ¿En qué se diferencia la decisión que tomó tu grupo de la que tomó el Grupo 9? ¿El SIG toma decisiones o solo proporciona información? ¿Qué pasaría si tomaras esta decisión sin los datos del SIG — solo con intuición?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#DB2777">Ranking de zonas</strong> ordenado por Índice de Oportunidad con zonas descartadas justificadas</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#DB2777">Ficha de selección</strong> para cada una de las 2 ubicaciones con 3+ criterios de justificación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#DB2777">Plan de implementación de 90 días</strong> por ubicación con costo estimado</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#DB2777">Presentación de 3 minutos</strong> ante la clase como gerente de expansión</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">El ranking debe derivarse del Índice de Oportunidad de la tabla del Grupo 9. El descarte debe estar argumentado (no solo "alta competencia" sino por qué eso hace inviable la entrada). Las 2 ubicaciones deben tener fichas con criterios explícitos de la tabla. El plan de 90 días debe ser secuencial y realista. La reflexión debe distinguir: SIG = herramienta de información espacial; Gerencia = decisión humana que integra datos SIG con contexto estratégico, presupuesto y capacidad operativa.</div>
+      </div>
+    </div>
+    <div id="mission-11" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #0D948844;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#0D9488;flex-shrink:0">G11</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 11 — OAS — Registro de Tiempos de Procesos de Oficina</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como el <strong style="color:#0D9488">módulo OAS (Office Automation System)</strong> del departamento de Servicio al Cliente. Tu misión es registrar los tiempos de procesamiento de solicitudes de clientes a medida que pasan por los distintos departamentos internos. Estos datos serán analizados por el Grupo 12 para diseñar una propuesta de integración con ERP. <strong style="color:#0D9488">Fase 1 (20 min):</strong> Construye la tabla de tiempos de proceso con datos que muestren <strong style="color:#0D9488">un cuello de botella evidente</strong> — un departamento donde las solicitudes se acumulan y se retrasan. <strong style="color:#0D9488">Fase 2 (5 min):</strong> Intercambia tu tabla con el Grupo 12.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#0D9488;font-weight:700">OAS — Registro de flujos de trabajo y tiempos de proceso</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#0D9488;font-weight:700">Grupo 11 (Emisor) ↔ Grupo 12 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#0D9488;font-weight:700">OAS — Office Automation System</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#0D9488;font-weight:700">Nivel del Conocimiento</span></div><div><span style="color:var(--muted)">Solicitudes a registrar:</span> <span style="color:#0D9488;font-weight:700">8 solicitudes de clientes (una por fila)</span></div><div><span style="color:var(--muted)">Departamentos del flujo:</span> <span style="color:#0D9488;font-weight:700">Recepción → Validación Contable → Bodega → Facturación → Despacho</span></div><div><span style="color:var(--muted)">Columnas sugeridas:</span> <span style="color:#0D9488;font-weight:700">N° Solicitud, Cliente, Tiempo en Recepción (min), Tiempo en Validación (min), Tiempo en Bodega (min), Tiempo en Facturación (min), Tiempo en Despacho (min), Errores detectados, Tiempo total (min)</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #0D948844;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #0D948844">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#0D9488">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0D9488;border:1px solid #0D948844;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0D9488">Construye la tabla de tiempos de proceso:</strong> Diseña la tabla con 8 solicitudes de clientes. Para el cuello de botella, elige uno de los 5 departamentos y asígnale tiempos notablemente altos en todas las solicitudes (3-5 veces más que los demás departamentos). Varía los tiempos para que sean realistas y no todos exactamente iguales.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0D9488;border:1px solid #0D948844;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0D9488">Agrega la columna de errores:</strong> En la columna "Errores detectados", incluye el tipo de error (ej. "factura duplicada", "código de producto incorrecto", "validación rechazada por falta de firma") y en qué departamento ocurrió. Haz que la mayoría de errores se concentren en el mismo departamento que tiene el cuello de botella.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0D9488;border:1px solid #0D948844;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0D9488">Reflexión sobre el OAS:</strong> ¿Qué ventaja tiene registrar estos tiempos en un sistema digital (OAS) versus llevar un control en papel o sin control alguno? ¿Cómo cambia la capacidad de mejora del proceso con y sin datos registrados?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0D9488;border:1px solid #0D948844;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0D9488">Preparación para el plenario:</strong> Resume en 3 líneas el flujo de trabajo que muestra tu tabla y dónde está el problema más evidente.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0D9488">Tabla de tiempos</strong> con 8 solicitudes, todos los departamentos y columna de errores</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0D9488">Tiempo total</strong> calculado por solicitud</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0D9488">Reflexión escrita</strong> sobre el valor del OAS para mejora de procesos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0D9488">Presentación de 3 minutos</strong> en el plenario final</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">El cuello de botella debe ser estadísticamente evidente: el departamento problema debe tener tiempos 3-5 veces superiores al promedio de los otros. Los errores deben concentrarse en ese mismo departamento. La reflexión debe argumentar con claridad: sin datos = gestión por percepción; con datos OAS = gestión basada en evidencia, medible, mejorable y auditable.</div>
+      </div>
+    </div>
+    <div id="mission-12" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #0F766E44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#0F766E;flex-shrink:0">G12</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 12 — Gerencia de Procesos — Propuesta de Integración ERP</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 2</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">Tu grupo actúa como la <strong style="color:#0F766E">Gerencia de Procesos e Integración ERP</strong>. Recibirás la tabla de tiempos del Grupo 11 y deberás identificar el cuello de botella, calcular su impacto económico y diseñar una propuesta de automatización del flujo mediante un módulo ERP que elimine los problemas detectados. <strong style="color:#0F766E">Fase 3 (25 min):</strong> Analiza la tabla, cuantifica el problema y diseña la propuesta de mejora con ERP. <strong style="color:#0F766E">Fase 4 (3 min):</strong> Presenta como consultor de procesos ante la dirección de la empresa.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Rol asignado:</span> <span style="color:#0F766E;font-weight:700">Gerencia de Procesos e Integración ERP — Diagnóstico y diseño de solución</span></div><div><span style="color:var(--muted)">Pareja de trabajo:</span> <span style="color:#0F766E;font-weight:700">Grupo 11 (Emisor) ↔ Grupo 12 (Receptor)</span></div><div><span style="color:var(--muted)">Sistema que simulas:</span> <span style="color:#0F766E;font-weight:700">ERP — visión de integración y automatización de procesos</span></div><div><span style="color:var(--muted)">Nivel organizacional:</span> <span style="color:#0F766E;font-weight:700">Nivel Administrativo / Estratégico</span></div><div><span style="color:var(--muted)">Tabla recibida de:</span> <span style="color:#0F766E;font-weight:700">Grupo 11 (OAS de Procesos)</span></div><div><span style="color:var(--muted)">Costo hora/hombre referencial:</span> <span style="color:#0F766E;font-weight:700">$4.50/hora (salario promedio empleado administrativo en Ecuador)</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #0F766E44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #0F766E44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#0F766E">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0F766E;border:1px solid #0F766E44;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0F766E">Identifica el cuello de botella:</strong> Calcula el tiempo promedio por departamento sumando todos los tiempos de las 8 solicitudes y dividiéndolos entre 8. ¿Qué departamento tiene el promedio más alto? ¿Cuántas veces más lento es comparado con el departamento más rápido? ¿Coincide el departamento lento con la mayor concentración de errores?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0F766E;border:1px solid #0F766E44;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0F766E">Cuantifica el impacto económico:</strong> Calcula el costo del tiempo desperdiciado en el cuello de botella. Fórmula: Tiempo extra diario perdido = (Tiempo promedio del cuello de botella − Tiempo promedio del departamento más eficiente) × N° solicitudes al día (supón 30 solicitudes/día). Luego: Costo diario = Tiempo extra (en horas) × $4.50/hora. Proyecta al año (220 días hábiles).</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0F766E;border:1px solid #0F766E44;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0F766E">Diseña la propuesta ERP:</strong> Propón qué módulo o funcionalidad de ERP automatizaría o agilizaría el proceso en el departamento cuello de botella. Describe: qué haría el sistema automáticamente que hoy se hace manualmente, cómo eliminaría los errores más frecuentes detectados en la tabla, y cuánto tiempo estimarías que se reduciría el proceso en ese departamento.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#0F766E;border:1px solid #0F766E44;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#0F766E">Reflexión final:</strong> ¿Por qué implementar un ERP en una empresa con procesos desorganizados y datos inconsistentes suele fracasar? ¿Qué debería hacer primero la empresa antes de implementar el ERP?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0F766E">Tabla de tiempos promedio por departamento</strong> con identificación del cuello de botella</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0F766E">Cálculo del impacto económico anual</strong> del tiempo desperdiciado con procedimiento completo</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0F766E">Propuesta de módulo ERP</strong> con descripción de automatizaciones y reducción de tiempo estimada</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0F766E">Reflexión</strong> sobre prerrequisitos organizacionales antes de implementar ERP</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#0F766E">Presentación de 3 minutos</strong> como consultor ante la dirección</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">El cuello de botella debe identificarse con cálculo de promedios por departamento (no por percepción). El cálculo económico debe seguir la fórmula con los datos reales de la tabla recibida. La propuesta ERP debe ser específica al tipo de error y departamento — no genérica. Mencionar al menos 2 automatizaciones concretas. La reflexión debe articular la premisa central: ERP es habilitador, no solución mágica. La empresa debe tener procesos claros, datos limpios y personas capacitadas antes de implementarlo.</div>
+      </div>
+    </div>
+
+  <div style="margin-top:40px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px">// Acceso docente — guía de respuestas</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <input id="sol-in" type="password" placeholder="clave docente" style="background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:7px;outline:none;letter-spacing:.1em;width:200px" onkeydown="if(event.key==='Enter')chkSol()">
+      <button onclick="chkSol()" style="background:#052e16;border:1px solid rgba(74,222,128,.3);color:#4ADE80;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer">Ver guía</button>
+    </div>
+  </div>
+
+  <div id="global-sol" class="global-solution">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;display:flex;align-items:center;gap:10px">// Guía de respuestas — Vista docente<span style="flex:1;height:1px;background:rgba(74,222,128,.2);display:block"></span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:10px">G1 — TPS de Ventas — Registro Operativo · Clave: <span style="background:#0c1d3f;padding:2px 8px;border-radius:4px">tps-ventas-g1</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">El docente verifica que la tabla tenga datos coherentes con un registro TPS real: valores numéricos, fechas, estados definidos. Las 2 alertas deben estar claramente identificadas con columna Estado en rojo o con indicador visible. La reflexión debe mencionar integridad del dato, trazabilidad y separación de roles (quien registra no decide). Revisar que la presentación del plenario describa el estado operativo sin emitir juicios de decisión — eso corresponde al Grupo 2.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0EA5E9;margin-bottom:10px">G2 — MIS Gerencial — Análisis y Decisión · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">mis-gerencial-g2</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Verificar que el semáforo corresponda a los datos recibidos del Grupo 1 (no inventados). El plan de decisiones debe ser específico y ejecutable — penalizar respuestas genéricas. El resumen ejecutivo debe omitir datos crudos y presentar síntesis accionable. La reflexión debe distinguir claramente: TPS registra hechos individuales en tiempo real; MIS agrega, resume y presenta patrones para decisión gerencial.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#10B981;margin-bottom:10px">G3 — CRM Operativo — Registro de Clientes · Clave: <span style="background:#052e16;padding:2px 8px;border-radius:4px">crm-operativo-g3</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Verificar coherencia de los datos: fechas realistas, montos acordes al tipo de empresa, reclamos con número. Los 2 clientes VIP desatendidos deben tener monto alto (>$5.000 anuales) y última compra hace más de 60 días. Los 2 inactivos sin compra en >90 días. La reflexión debe mencionar: centralización de la información, continuidad ante rotación de personal, y visibilidad 360° del cliente para todo el equipo.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#059669;margin-bottom:10px">G4 — CRM Estratégico — Segmentación y Acción Comercial · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">crm-marketing-g4</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">La segmentación debe basarse en los datos reales recibidos del Grupo 3, no en criterios inventados. Las acciones deben ser diferenciadas, específicas y coherentes con el segmento. La estimación de impacto debe tener cálculo explícito con los números de la tabla. La reflexión debe identificar: G3 opera a nivel operativo/conocimiento (registra y mantiene datos), G4 opera a nivel administrativo/estratégico (analiza y decide).</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:10px">G5 — SCM Almacén — Control de Inventario de Materias Primas · Clave: <span style="background:#2d2208;padding:2px 8px;border-radius:4px">scm-almacen-g5</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Verificar que los días disponibles estén calculados correctamente (Stock ÷ Consumo diario). Los 2 insumos críticos deben tener días disponibles < lead time. El cálculo de cantidad a pedir debe seguir la fórmula o una equivalente. La reflexión debe mencionar: alertas automáticas, visibilidad en tiempo real, y prevención del paro de producción como valor central del SCM.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#D97706;margin-bottom:10px">G6 — SCM Compras — Gestión de Órdenes Urgentes · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">scm-compras-g6</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">La clasificación de criticidad debe derivarse directamente de los datos del Grupo 5 (días disponibles − lead time). Las órdenes de compra deben tener cantidades calculadas, no estimadas al azar. El cálculo del paro: 50 emp × ($500/22 días) = $1.136/día en salarios + 200 × $15 = $3.000 en ventas + $1.000 penalidades = ~$5.136 por día de paro. La reflexión debe argumentar que la cadena de suministro opera en tiempo real — un retraso de 3 días en la información puede representar exactamente 3 días de paro adicional.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#8B5CF6;margin-bottom:10px">G7 — ERP — Control Financiero por Línea de Negocio · Clave: <span style="background:#1e1340;padding:2px 8px;border-radius:4px">erp-financiero-g7</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Los márgenes deben estar correctamente calculados. La línea deficitaria debe tener margen negativo Y tendencia ↓ por ≥2 meses. La línea más rentable debe tener margen >30%. La reflexión debe mencionar: consolidación en tiempo real, eliminación de datos duplicados o inconsistentes, y auditoría centralizada como ventajas del ERP frente a Excel descentralizado.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:10px">G8 — ESS — Directorio Ejecutivo y Decisión Estratégica · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">ess-directorio-g8</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">El diagnóstico debe cruzar datos internos con el contexto externo dado. La decisión sobre la línea deficitaria debe estar argumentada más allá del número puro (considerar empleo, activos, reputación). La propuesta de expansión debe tener cálculo de retorno estimado. La reflexión debe distinguir: MIS → decisiones con criterios definidos (semáforo, umbral); ESS → sin fórmula fija, requiere juicio, experiencia y contexto que trasciende los datos internos.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EC4899;margin-bottom:10px">G9 — SIG — Análisis Geográfico de Mercado · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">sig-geografico-g9</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">La tabla debe incluir zonas reales de Guayaquil con datos verosímiles. El Índice de Oportunidad debe tener una fórmula explícita y aplicada de forma consistente. El análisis de patrones debe ir más allá de describir cada fila — debe buscar correlaciones entre columnas. La reflexión debe mencionar al menos 3 tipos de capas adicionales que mejorarían el análisis (tráfico, NSE, proyecciones demográficas, mapas de competencia en tiempo real).</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#DB2777;margin-bottom:10px">G10 — Gerencia de Expansión — Decisión de Nuevas Ubicaciones · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">expansion-comercial-g10</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">El ranking debe derivarse del Índice de Oportunidad de la tabla del Grupo 9. El descarte debe estar argumentado (no solo "alta competencia" sino por qué eso hace inviable la entrada). Las 2 ubicaciones deben tener fichas con criterios explícitos de la tabla. El plan de 90 días debe ser secuencial y realista. La reflexión debe distinguir: SIG = herramienta de información espacial; Gerencia = decisión humana que integra datos SIG con contexto estratégico, presupuesto y capacidad operativa.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0D9488;margin-bottom:10px">G11 — OAS — Registro de Tiempos de Procesos de Oficina · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">oas-procesos-g11</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">El cuello de botella debe ser estadísticamente evidente: el departamento problema debe tener tiempos 3-5 veces superiores al promedio de los otros. Los errores deben concentrarse en ese mismo departamento. La reflexión debe argumentar con claridad: sin datos = gestión por percepción; con datos OAS = gestión basada en evidencia, medible, mejorable y auditable.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0F766E;margin-bottom:10px">G12 — Gerencia de Procesos — Propuesta de Integración ERP · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">erp-integracion-g12</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">El cuello de botella debe identificarse con cálculo de promedios por departamento (no por percepción). El cálculo económico debe seguir la fórmula con los datos reales de la tabla recibida. La propuesta ERP debe ser específica al tipo de error y departamento — no genérica. Mencionar al menos 2 automatizaciones concretas. La reflexión debe articular la premisa central: ERP es habilitador, no solución mágica. La empresa debe tener procesos claros, datos limpios y personas capacitadas antes de implementarlo.</div>
+      </div>
+  </div>
+
+</div>
+
+<footer>
+  Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>SIA — Taller Semana 2</span>
+</footer>
+
+<script>
+const CLAVES={1:"tps-ventas-g1",2:"mis-gerencial-g2",3:"crm-operativo-g3",4:"crm-marketing-g4",5:"scm-almacen-g5",6:"scm-compras-g6",7:"erp-financiero-g7",8:"ess-directorio-g8",9:"sig-geografico-g9",10:"expansion-comercial-g10",11:"oas-procesos-g11",12:"erp-integracion-g12"};
+const CLAVE_DOC="docentesia2025";
+let secs=4500,run=false,iv;
+function fmt(s){const m=Math.floor(s/60),sc=s%60;return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc}
+document.getElementById('td').textContent=fmt(secs);
+function toggleTimer(){run=!run;const b=document.getElementById('tbtn');
+  if(run){b.textContent='⏸ pausar';b.classList.add('on');
+    iv=setInterval(()=>{if(secs>0){secs--;document.getElementById('td').textContent=fmt(secs);}
+      else{clearInterval(iv);run=false;b.textContent='▶ iniciar';b.classList.remove('on');document.getElementById('td').style.color='#FF7B72';}
+    },1000);
+  }else{clearInterval(iv);b.textContent='▶ iniciar';b.classList.remove('on');}
+}
+function resetTimer(){clearInterval(iv);run=false;secs=4500;
+  document.getElementById('td').textContent=fmt(secs);document.getElementById('td').style.color='';
+  const b=document.getElementById('tbtn');b.textContent='▶ iniciar';b.classList.remove('on');}
+function sel(n){
+  [1,2,3,4,5,6,7,8,9,10,11,12].forEach(i=>{
+    document.getElementById('access-'+i).classList.remove('vis');
+    document.getElementById('mission-'+i).classList.remove('vis');
+  });
+  document.getElementById('access-'+n).classList.add('vis');
+  document.getElementById('access-'+n).scrollIntoView({behavior:'smooth',block:'center'});
+}
+function ck(n){
+  const v=document.getElementById('ki-'+n).value.trim();
+  if(v===CLAVES[n]){
+    document.getElementById('access-'+n).classList.remove('vis');
+    document.getElementById('mission-'+n).classList.add('vis');
+    document.getElementById('mission-'+n).scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ke-'+n).style.display='none';
+  }else{
+    document.getElementById('ke-'+n).style.display='block';
+    document.getElementById('ki-'+n).style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('ki-'+n).style.borderColor='',1500);
+  }
+}
+function chkSol(){
+  if(document.getElementById('sol-in').value.trim()===CLAVE_DOC){
+    document.getElementById('global-sol').classList.add('vis');
+    document.getElementById('global-sol').scrollIntoView({behavior:'smooth'});
+  }else{
+    document.getElementById('sol-in').style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('sol-in').style.borderColor='',1500);
+  }
+}
+</script>
+</body></html>
