@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taller S1 — SIG-T01 · Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#8B5CF6;--ac-dim:#1e1340;--ac2:#8B5CF6;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F0EEFF;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:52px 1.5rem 36px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px}
+.groups-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;cursor:pointer;transition:all .22s}
+.gcard:hover{transform:translateY(-3px)}
+.access-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:20px;text-align:center}
+.access-panel.vis{display:block}
+.key-input{background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;padding:10px 16px;border-radius:7px;width:220px;outline:none;letter-spacing:.12em;text-align:center;transition:border-color .2s}
+.key-input:focus{border-color:var(--ac)}
+.key-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:#FF7B72;margin-top:10px;display:none}
+.mission-panel{display:none}.mission-panel.vis{display:block}
+.nav-timer{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);display:flex;align-items:center;gap:6px}
+#td{font-size:16px;font-weight:700;min-width:58px}
+.tbtn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .2s}
+.tbtn:hover{color:var(--text)}.tbtn.on{background:#1e1340;color:var(--ac);border-color:#8B5CF644}
+.global-solution{display:none;background:var(--surface);border:1px solid rgba(74,222,128,.3);border-radius:var(--radius);padding:26px;margin-top:32px}
+.global-solution.vis{display:block}
+@media(max-width:640px){.groups-grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>🕵️</span>
+    SIG-T01 <span class="sep">/</span><span class="dim">taller-semana-1</span>
+  </div>
+  <div class="nav-timer">⏱ <span id="td">40:00</span>
+    <button class="tbtn" id="tbtn" onclick="toggleTimer()">▶ iniciar</button>
+    <button class="tbtn" onclick="resetTimer()">↺</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+    <a class="nav-back" href="SIG-T01.html">↩ Semana 1</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1;max-width:860px;margin:0 auto;padding:48px 1.5rem 36px;text-align:center">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+    Semana 1 · Taller grupal · SIG-T01
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px">
+    <span style="color:var(--muted)">Detectives de Sistemas de Información</span>
+  </h1>
+  <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;line-height:1.7">Cada grupo asume el rol de consultor de una empresa y debe diagnosticar problemas, identificar los sistemas de información necesarios, resolver una crisis y tomar una decisión gerencial. Al finalizar, cada grupo defiende sus decisiones frente a la clase en 3 minutos.</p>
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">6 Grupos</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">40 minutos</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">// Selecciona tu grupo<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+  <div class="groups-grid">
+    <div class="gcard" onclick="sel(1)" style="border-color:#3B82F644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#3B82F6">G1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 1</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Universidad Nova</div>
+      </div><div class="gcard" onclick="sel(2)" style="border-color:#10B98144">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#10B981">G2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 2</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Hospital Vida</div>
+      </div><div class="gcard" onclick="sel(3)" style="border-color:#F59E0B44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#F59E0B">G3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 3</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">MaxMarket</div>
+      </div><div class="gcard" onclick="sel(4)" style="border-color:#EF444444">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EF4444">G4</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 4</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Banco Capital</div>
+      </div><div class="gcard" onclick="sel(5)" style="border-color:#8B5CF644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#8B5CF6">G5</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 5</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">AeroAndes</div>
+      </div><div class="gcard" onclick="sel(6)" style="border-color:#06B6D444">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#06B6D4">G6</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 6</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Sabor Urbano</div>
+      </div>
+  </div>
+
+  
+    <div id="access-1" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#3B82F6;margin-bottom:6px">🔒 Grupo 1 — Universidad Nova</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(1)">
+        <button style="background:#3B82F6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(1)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-1">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-2" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#10B981;margin-bottom:6px">🔒 Grupo 2 — Hospital Vida</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(2)">
+        <button style="background:#10B981;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(2)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-2">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-3" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#F59E0B;margin-bottom:6px">🔒 Grupo 3 — MaxMarket</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(3)">
+        <button style="background:#F59E0B;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(3)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-3">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-4" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;margin-bottom:6px">🔒 Grupo 4 — Banco Capital</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(4)">
+        <button style="background:#EF4444;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(4)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-4">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-5" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#8B5CF6;margin-bottom:6px">🔒 Grupo 5 — AeroAndes</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(5)">
+        <button style="background:#8B5CF6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(5)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-5">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-6" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#06B6D4;margin-bottom:6px">🔒 Grupo 6 — Sabor Urbano</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-6" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(6)">
+        <button style="background:#06B6D4;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(6)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-6">⚠ Clave incorrecta</div>
+    </div>
+  
+    <div id="mission-1" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#0c1d3f;border:1px solid #3B82F644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#3B82F6;flex-shrink:0">G1</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 1 — Universidad Nova</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La <strong style="color:#3B82F6">Universidad Nova</strong> ha experimentado un crecimiento importante durante los últimos tres años. Sin embargo, este crecimiento ha generado problemas en sus procesos administrativos, gestión del conocimiento y toma de decisiones. La rectoría considera que la institución posee una gran cantidad de datos pero no está aprovechando correctamente esa información para mejorar su gestión. Su grupo actúa como <strong style="color:#3B82F6">equipo consultor externo</strong> contratado para diagnosticar la situación, identificar los sistemas necesarios, resolver una crisis de información y tomar una decisión de inversión tecnológica. El taller tiene <strong style="color:#3B82F6">4 etapas</strong> — léalas en orden y respondan cada una antes de avanzar a la siguiente.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#3B82F6;font-weight:700">Universidad Nova</span></div><div><span style="color:var(--muted)">Estudiantes matriculados:</span> <span style="color:#3B82F6;font-weight:700">8.000</span></div><div><span style="color:var(--muted)">Docentes:</span> <span style="color:#3B82F6;font-weight:700">420</span></div><div><span style="color:var(--muted)">Crecimiento anual:</span> <span style="color:#3B82F6;font-weight:700">12%</span></div><div><span style="color:var(--muted)">Presupuesto disponible para tecnología:</span> <span style="color:#3B82F6;font-weight:700">$500.000</span></div><div><span style="color:var(--muted)">Problemas actuales:</span> <span style="color:#3B82F6;font-weight:700">matrículas manuales, documentos dispersos, reportes tardíos, planificación reactiva</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #3B82F644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#0c1d3f;border-bottom:1px solid #3B82F644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#3B82F6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">ETAPA 1 — Diagnóstico:</strong> La universidad aún realiza algunos procesos manualmente, tiene documentos almacenados en diferentes lugares y los directivos solicitan información que tarda varios días en prepararse. Identifique los <strong style="color:#3B82F6">tres problemas principales</strong> relacionados con la información. ¿Qué consecuencias tiene para una institución manejar información de manera desorganizada? ¿Qué información considera indispensable para que la rectoría conozca el estado real de la universidad?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">ETAPA 2 — Identificación de sistemas:</strong> Relacione cada necesidad con el sistema correcto. Use la tabla del entregable. (a) Registrar matrículas, pagos, retiros y cambios de materias. (b) Crear documentos, organizar reuniones, enviar correos y compartir archivos. (c) Conservar procedimientos, manuales y experiencias de empleados. (d) Generar reportes mensuales sobre matrículas, ingresos y deserción. (e) Analizar qué ocurriría si aumenta el precio de matrículas un 10%. (f) Visualizar indicadores generales y definir hacia dónde crecer en los próximos 5 años.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">ETAPA 3 — Crisis de conocimiento:</strong> La universidad descubrió que varios empleados mantienen procedimientos importantes únicamente en sus computadoras personales. Uno de ellos acaba de renunciar y otros empleados no saben cómo realizar determinados procesos críticos. ¿Cuál es el problema de información? ¿Qué sistema debería implementar para evitar que vuelva a ocurrir? Diseñe un <strong style="color:#3B82F6">plan de tres acciones concretas</strong> para conservar el conocimiento institucional.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#3B82F6">ETAPA 4 — Decisión gerencial:</strong> La rectoría tiene $500.000 para invertir en una sola alternativa: <strong style="color:#3B82F6">(A)</strong> Mejorar sistemas operativos y registros (TPS), <strong style="color:#3B82F6">(B)</strong> Crear una plataforma de análisis y toma de decisiones (DSS), <strong style="color:#3B82F6">(C)</strong> Crear una plataforma de gestión del conocimiento (KMS). ¿Cuál priorizaría? Justifique con al menos <strong style="color:#3B82F6">3 argumentos sólidos</strong> basados en los problemas diagnosticados. Prepare una presentación de 3 minutos para defender su decisión ante la clase — otro grupo podrá hacerles una pregunta.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Etapa 1:</strong> Lista de 3 problemas principales con consecuencias y lista de información necesaria para la rectoría</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Etapa 2:</strong> Tabla con 6 necesidades → sistema identificado → justificación de una línea</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Etapa 3:</strong> Identificación del problema + sistema propuesto + plan de 3 acciones concretas</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Etapa 4:</strong> Alternativa elegida (A, B o C) + 3 argumentos de defensa</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#3B82F6">Presentación de 3 minutos</strong> ante la clase con defensa ante una pregunta de otro grupo</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Problemas esperados — registro manual de operaciones, documentación dispersa sin acceso centralizado, reportes lentos que llegan tarde a los directivos. Consecuencias: errores en registros, pérdida de información, decisiones tardías y poco fundamentadas. Info para rectoría: matrículas activas, ingresos, deserción, desempeño académico, costos operativos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS — registra transacciones operativas. (b) OAS — automatiza oficina. (c) KMS — conserva conocimiento. (d) MIS — reportes para administradores. (e) DSS — análisis de escenarios. (f) ESS/EIS — visión estratégica de alta dirección.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Problema = dependencia del conocimiento individual, falta de documentación institucional. Sistema = KMS. Acciones: 1. Documentar inmediatamente todos los procesos críticos con sus responsables. 2. Crear repositorio digital centralizado con acceso por roles. 3. Establecer protocolo de traspaso obligatorio antes de cualquier desvinculación.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: Cualquier alternativa es válida si el diagnóstico es coherente. A=TPS si el problema principal son las operaciones manuales. B=DSS si la urgencia es mejorar decisiones. C=KMS si la crisis de conocimiento es el riesgo más crítico.</div>
+      </div>
+    </div>
+    <div id="mission-2" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#052e16;border:1px solid #10B98144;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#10B981;flex-shrink:0">G2</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 2 — Hospital Vida</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">El <strong style="color:#10B981">Hospital Vida</strong> atiende diariamente a cientos de pacientes. La dirección ha detectado problemas relacionados con registros, comunicación interna, documentación y planificación. La información está distribuida entre diferentes departamentos, algunos reportes se elaboran manualmente y determinados procedimientos críticos solo son conocidos por empleados con mucha experiencia. Su grupo actúa como <strong style="color:#10B981">equipo consultor especializado en salud</strong> contratado para diagnosticar la situación, identificar sistemas, resolver una crisis de demanda y recomendar una inversión. El taller tiene <strong style="color:#10B981">4 etapas</strong> — léalas en orden y respondan cada una antes de avanzar.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#10B981;font-weight:700">Hospital Vida</span></div><div><span style="color:var(--muted)">Pacientes atendidos diariamente:</span> <span style="color:#10B981;font-weight:700">650</span></div><div><span style="color:var(--muted)">Profesionales de salud y administrativos:</span> <span style="color:#10B981;font-weight:700">780</span></div><div><span style="color:var(--muted)">Camas disponibles:</span> <span style="color:#10B981;font-weight:700">220</span></div><div><span style="color:var(--muted)">Presupuesto disponible:</span> <span style="color:#10B981;font-weight:700">$200.000</span></div><div><span style="color:var(--muted)">Problemas actuales:</span> <span style="color:#10B981;font-weight:700">registros dispersos, procedimientos solo en la memoria de empleados expertos, reportes manuales lentos</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #10B98144;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#052e16;border-bottom:1px solid #10B98144">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#10B981">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">ETAPA 1 — Diagnóstico:</strong> El hospital tiene información distribuida entre departamentos, algunos reportes se hacen manualmente y ciertos procedimientos solo los conocen empleados con experiencia. Identifique <strong style="color:#10B981">3 problemas de información concretos</strong>. ¿Qué riesgos específicos aparecen si los datos de los pacientes no se registran correctamente? ¿Qué información necesitaría la dirección para evaluar el desempeño del hospital?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">ETAPA 2 — Identificación de sistemas:</strong> Relacione cada necesidad hospitalaria con el sistema correcto. (a) Registrar admisiones, pagos y altas de pacientes. (b) Facilitar documentos, agendas y comunicación entre departamentos. (c) Conservar protocolos médicos y procedimientos administrativos. (d) Generar reportes de ocupación, costos y tiempos de atención. (e) Analizar si contratar 5 médicos adicionales sería conveniente económicamente. (f) Permitir a la dirección observar indicadores estratégicos del hospital.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">ETAPA 3 — Crisis de demanda:</strong> Durante una temporada de alta demanda, el número de pacientes aumenta un 25%. La dirección debe decidir rápidamente entre tres alternativas: contratar personal temporal, ampliar horarios del personal actual, o redistribuir recursos existentes entre áreas. ¿Qué información debería analizar antes de decidir? ¿Qué sistema ayudaría a comparar las tres alternativas? ¿Qué consecuencias tendría tomar la decisión sin información?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#10B981">ETAPA 4 — Decisión gerencial:</strong> El hospital puede invertir $200.000 en una sola alternativa: <strong style="color:#10B981">(A)</strong> Mejorar el registro de operaciones y atención al paciente (TPS), <strong style="color:#10B981">(B)</strong> Crear un sistema de análisis de decisiones médicas y administrativas (DSS), <strong style="color:#10B981">(C)</strong> Crear una base institucional de conocimiento médico y procedimental (KMS). ¿Cuál elegiría? Justifique con 3 argumentos. Prepare una presentación de 3 minutos — otro grupo podrá hacer una pregunta.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Etapa 1:</strong> 3 problemas de información + riesgos de registros incorrectos + información necesaria para la dirección</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Etapa 2:</strong> Tabla de 6 necesidades → sistema → justificación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Etapa 3:</strong> Información necesaria para decidir + sistema recomendado + comparación de las 3 alternativas + consecuencias de decidir sin datos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Etapa 4:</strong> Alternativa elegida (A, B o C) + 3 argumentos de defensa</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#10B981">Presentación de 3 minutos</strong> con defensa ante una pregunta</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Problemas — registros de pacientes no centralizados, procedimientos solo en la memoria de empleados expertos, reportes de desempeño manuales y lentos. Riesgos: errores en medicación o diagnóstico, pérdida de historial, decisiones tardías en crisis. Info dirección: pacientes atendidos/día, ocupación de camas, costos por área, tiempos de atención, ingresos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Info necesaria — demanda actual vs. capacidad, costos de cada alternativa, disponibilidad de personal, tiempos de espera actuales. Sistema = DSS para comparar escenarios. Consecuencias sin datos: sobrecosto por exceso de contratación o colapso por insuficiencia de recursos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: A=TPS si el problema central es el registro. B=DSS si la urgencia es mejorar decisiones en crisis. C=KMS si la pérdida de conocimiento clínico es el riesgo más crítico. Cualquier alternativa válida con argumentación coherente con el diagnóstico.</div>
+      </div>
+    </div>
+    <div id="mission-3" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#2d2208;border:1px solid #F59E0B44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#F59E0B;flex-shrink:0">G3</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 3 — MaxMarket</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#F59E0B">MaxMarket</strong> posee 12 supermercados y procesa miles de compras diariamente. La gerencia tiene una gran cantidad de datos pero necesita convertirlos en información útil. Los gerentes reciben grandes cantidades de información en bruto, los reportes se elaboran manualmente y cada sucursal utiliza procedimientos diferentes lo que dificulta la comparación y el análisis. Su grupo actúa como <strong style="color:#F59E0B">consultores de transformación digital</strong> contratados para diagnosticar la situación, identificar sistemas, resolver una crisis de ventas y recomendar una decisión comercial. El taller tiene <strong style="color:#F59E0B">4 etapas</strong> — respóndanlas en orden.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#F59E0B;font-weight:700">MaxMarket Supermercados</span></div><div><span style="color:var(--muted)">Sucursales:</span> <span style="color:#F59E0B;font-weight:700">12</span></div><div><span style="color:var(--muted)">Transacciones diarias:</span> <span style="color:#F59E0B;font-weight:700">18.000</span></div><div><span style="color:var(--muted)">Productos en catálogo:</span> <span style="color:#F59E0B;font-weight:700">25.000</span></div><div><span style="color:var(--muted)">Empleados totales:</span> <span style="color:#F59E0B;font-weight:700">1.400</span></div><div><span style="color:var(--muted)">Problema principal:</span> <span style="color:#F59E0B;font-weight:700">exceso de datos operativos con poca capacidad de análisis gerencial</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #F59E0B44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#2d2208;border-bottom:1px solid #F59E0B44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F59E0B">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">ETAPA 1 — Diagnóstico:</strong> Cada sucursal usa procedimientos diferentes, los reportes se generan manualmente y la gerencia no puede comparar el desempeño entre locales de forma ágil. Identifique <strong style="color:#F59E0B">3 problemas de información concretos</strong>. ¿Qué información debería estar disponible diariamente para la gerencia? ¿Qué conocimiento debería compartirse entre todas las sucursales?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">ETAPA 2 — Identificación de sistemas:</strong> (a) ¿Qué sistema registra cada transacción de venta en caja? (b) ¿Qué sistema automatiza documentos y comunicación entre sucursales y casa matriz? (c) ¿Qué sistema conserva procedimientos de inventario, atención y ventas? (d) ¿Qué sistema genera reportes mensuales de ventas por sucursal? (e) ¿Qué sistema analiza el impacto de cambiar los precios de los 50 productos más vendidos? (f) ¿Qué sistema permite a la dirección analizar crecimiento y rentabilidad por región?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">ETAPA 3 — Crisis de ventas:</strong> Una de las principales sucursales presenta una caída de ventas del 18% durante tres meses consecutivos. ¿Qué información analizaría para entender las causas? ¿Qué sistema utilizaría para estudiar la situación? ¿Qué alternativas podría evaluar para revertirla? ¿Qué decisión recomendaría y por qué?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#F59E0B">ETAPA 4 — Decisión comercial:</strong> MaxMarket puede implementar una promoción nacional del 10% de descuento en todos los productos. La gerencia teme que afecte la rentabilidad. ¿Implementaría la promoción? ¿Qué información necesita para decidir? ¿Qué sistema utilizaría para analizar los escenarios? Proponga una alternativa diferente a la promoción general si considera que hay una mejor opción. Prepare 3 minutos de defensa ante la clase.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Etapa 1:</strong> 3 problemas + información necesaria diariamente + conocimiento a estandarizar</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Etapa 2:</strong> Tabla de 6 sistemas con justificación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Etapa 3:</strong> Información analizada + sistema usado + alternativas evaluadas + recomendación final</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Etapa 4:</strong> Decisión sobre la promoción + datos utilizados + escenario alternativo propuesto</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#F59E0B">Presentación de 3 minutos</strong> con defensa</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Problemas — falta de integración entre sucursales, reportes manuales tardíos, procedimientos no estandarizados. Info diaria: ventas por sucursal/categoría/producto, inventario con alertas de stock mínimo, ingresos vs. presupuesto. Conocimiento: procedimientos de inventario, protocolos de atención, gestión de mermas.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Info: ventas históricas de la sucursal, comparación con otras sucursales similares, análisis por categoría, datos de competidores cercanos. Sistema: MIS para diagnóstico + DSS para alternativas. Alternativas: promoción local, renovación de layout, ampliación de horarios, mejora de categorías específicas. Recomendación: debe basarse en el análisis, no en suposición.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: Cálculo clave — con margen del 22% y descuento del 10%, el volumen debe aumentar ~45% para mantener ganancia. Alternativas: descuento selectivo en productos de alta elasticidad, programa de fidelización, promoción por volumen. Sistema = DSS.</div>
+      </div>
+    </div>
+    <div id="mission-4" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EF444444;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EF4444;flex-shrink:0">G4</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 4 — Banco Capital</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">El <strong style="color:#EF4444">Banco Capital</strong> procesa miles de transacciones diariamente y posee información sobre clientes, créditos, depósitos y operaciones. Tiene sistemas que registran operaciones, pero los gerentes necesitan reportes más rápidos y la alta dirección quiere mejorar su capacidad de análisis para tomar mejores decisiones estratégicas. Su grupo actúa como <strong style="color:#EF4444">consultores de sistemas bancarios</strong> contratados para identificar los sistemas necesarios, resolver una crisis competitiva y recomendar una estrategia de respuesta. El taller tiene <strong style="color:#EF4444">4 etapas</strong> — respóndanlas en orden.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#EF4444;font-weight:700">Banco Capital</span></div><div><span style="color:var(--muted)">Clientes activos:</span> <span style="color:#EF4444;font-weight:700">250.000</span></div><div><span style="color:var(--muted)">Transacciones diarias:</span> <span style="color:#EF4444;font-weight:700">45.000</span></div><div><span style="color:var(--muted)">Sucursales:</span> <span style="color:#EF4444;font-weight:700">28</span></div><div><span style="color:var(--muted)">Productos financieros:</span> <span style="color:#EF4444;font-weight:700">créditos, depósitos, tarjetas, inversiones</span></div><div><span style="color:var(--muted)">Problema principal:</span> <span style="color:#EF4444;font-weight:700">datos operativos abundantes pero poca capacidad de análisis y decisión ágil</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EF444444;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EF444444">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EF4444">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EF4444">ETAPA 1 — Diagnóstico:</strong> El banco registra bien sus operaciones pero los gerentes no reciben reportes a tiempo y la alta dirección carece de visibilidad estratégica consolidada. Identifique qué información debe registrarse correctamente a nivel operativo, qué reportes necesitarían los gerentes de área y qué información necesitaría la alta dirección para tomar decisiones estratégicas.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EF4444">ETAPA 2 — Identificación de sistemas:</strong> (a) ¿Qué sistema registra depósitos, retiros, transferencias y pagos de crédito? (b) ¿Qué sistema automatiza documentos, correos y agendas del personal? (c) ¿Qué sistema almacena procedimientos operativos y regulatorios? (d) ¿Qué sistema genera reportes gerenciales de volumen, créditos e ingresos? (e) ¿Qué sistema analiza el impacto de reducir las tasas de interés un 1,5%? (f) ¿Qué sistema ayuda a la alta dirección a definir la estrategia de expansión de los próximos 3 años?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EF4444">ETAPA 3 — Crisis competitiva:</strong> Un competidor acaba de reducir sus tasas de interés y el banco está comenzando a perder clientes. La gerencia tiene 48 horas para responder. ¿Qué información analizaría de forma urgente? ¿Qué alternativas consideraría (reducir tasas, crear beneficios exclusivos, lanzar nuevo producto)? ¿Qué sistema utilizaría para evaluar cada alternativa? ¿Qué riesgo tendría tomar una decisión equivocada?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#EF4444">ETAPA 4 — Decisión gerencial:</strong> Debe elegir una estrategia de respuesta: <strong style="color:#EF4444">(A)</strong> Reducir tasas para competir directamente, <strong style="color:#EF4444">(B)</strong> Crear un paquete de beneficios exclusivos para clientes actuales (seguros, cashback, atención preferencial), <strong style="color:#EF4444">(C)</strong> Lanzar un nuevo producto financiero diferenciado. ¿Qué alternativa elegiría? ¿Qué información necesita? ¿Qué indicador usaría para medir el éxito de su decisión en 90 días? Prepare 3 minutos de defensa.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EF4444">Etapa 1:</strong> Información operativa + gerencial + estratégica claramente diferenciadas</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EF4444">Etapa 2:</strong> Tabla de 6 sistemas con justificación específica al contexto bancario</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EF4444">Etapa 3:</strong> Información urgente necesaria + alternativas evaluadas + sistema utilizado + riesgos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EF4444">Etapa 4:</strong> Alternativa elegida + indicador de éxito a 90 días + 3 argumentos de defensa</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#EF4444">Presentación de 3 minutos</strong> con defensa ante una pregunta</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Operativo — depósitos, retiros, transferencias, pagos de crédito (cada transacción). Gerencial — volumen por sucursal, mora, créditos aprobados/rechazados, ingresos por producto. Estratégico — rentabilidad por segmento de cliente, participación de mercado, proyección de crecimiento de cartera.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Info urgente: cuántos clientes han consultado sobre salida en los últimos 7 días, comparativo de tasas propio vs. competidor, costo de retención vs. costo de adquisición de nuevo cliente. Alternativas: reducir tasas (afecta margen), beneficios exclusivos (menor costo), nuevo producto (más tiempo para desarrollar). Sistema = DSS. Riesgo de error: guerra de precios insostenible o pérdida de clientes por inacción.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: Cualquier alternativa válida con indicador coherente. B suele ser la más eficiente en costo a corto plazo. Indicador A = retención %. Indicador B = churn rate (tasa de abandono). Indicador C = nuevos clientes / costo de adquisición.</div>
+      </div>
+    </div>
+    <div id="mission-5" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1e1340;border:1px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#8B5CF6;flex-shrink:0">G5</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 5 — AeroAndes</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La aerolínea <strong style="color:#8B5CF6">AeroAndes</strong> opera múltiples vuelos diariamente y busca mejorar el uso de la información para aumentar su eficiencia y rentabilidad. Diferentes departamentos trabajan con información separada: reservas, tripulación, mantenimiento y finanzas no comparten datos en tiempo real, lo que genera ineficiencias operativas y decisiones tardías. Su grupo actúa como <strong style="color:#8B5CF6">consultores de aviación comercial</strong> contratados para diagnosticar la situación, identificar sistemas, evaluar una decisión de expansión y defenderla ante la dirección. El taller tiene <strong style="color:#8B5CF6">4 etapas</strong> — respóndanlas en orden.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#8B5CF6;font-weight:700">AeroAndes</span></div><div><span style="color:var(--muted)">Vuelos diarios:</span> <span style="color:#8B5CF6;font-weight:700">85</span></div><div><span style="color:var(--muted)">Pasajeros diarios:</span> <span style="color:#8B5CF6;font-weight:700">14.000</span></div><div><span style="color:var(--muted)">Destinos nacionales e internacionales:</span> <span style="color:#8B5CF6;font-weight:700">32</span></div><div><span style="color:var(--muted)">Inversión requerida para nueva ruta internacional:</span> <span style="color:#8B5CF6;font-weight:700">$1.200.000</span></div><div><span style="color:var(--muted)">Problemas actuales:</span> <span style="color:#8B5CF6;font-weight:700">sistemas desconectados entre departamentos, procedimientos de emergencia solo en la memoria de tripulación experimentada, reportes de ocupación manuales</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #8B5CF644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1e1340;border-bottom:1px solid #8B5CF644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8B5CF6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">ETAPA 1 — Diagnóstico:</strong> AeroAndes tiene información valiosa pero fragmentada entre departamentos que no se comunican en tiempo real. Identifique qué información debería integrarse entre todos los departamentos. ¿Qué problemas concretos genera tener sistemas desconectados en una aerolínea? ¿Qué indicadores estratégicos debería observar la dirección regularmente?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">ETAPA 2 — Identificación de sistemas:</strong> (a) ¿Qué sistema registra reservas, check-in y pagos? (b) ¿Qué sistema facilita comunicación, documentos y agendas entre departamentos? (c) ¿Qué sistema almacena protocolos para retrasos, cancelaciones y emergencias? (d) ¿Qué sistema genera reportes de ocupación, ingresos y puntualidad? (e) ¿Qué sistema analiza si abrir una nueva ruta internacional sería rentable? (f) ¿Qué sistema ayuda a la dirección a decidir la estrategia de expansión de la aerolínea?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">ETAPA 3 — Decisión de nueva ruta:</strong> AeroAndes considera abrir una nueva ruta internacional con una inversión inicial de $1.200.000. No pueden permitirse un error — si la ruta falla, la empresa perdería liquidez durante 18 meses. ¿Qué información necesitaría antes de decidir? Diseñe <strong style="color:#8B5CF6">3 escenarios</strong> (pesimista, base y optimista) con al menos 3 variables cada uno. ¿Qué sistema utilizaría para analizar los escenarios? ¿Qué riesgo existe si la decisión se basa solo en intuición?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#8B5CF6">ETAPA 4 — Decisión de expansión:</strong> La dirección debe elegir entre: <strong style="color:#8B5CF6">(A)</strong> Abrir la nueva ruta internacional ($1.200.000 de inversión), <strong style="color:#8B5CF6">(B)</strong> Aumentar frecuencias en las 3 rutas domésticas más rentables (menor inversión, menor riesgo), <strong style="color:#8B5CF6">(C)</strong> Reducir precios un 12% para aumentar la ocupación en rutas actuales. ¿Qué alternativa elegiría? ¿Qué indicador usaría para medir el éxito en 6 meses? Prepare 3 minutos de defensa — justifique con los escenarios de la Etapa 3.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Etapa 1:</strong> Información a integrar + problemas de sistemas desconectados + indicadores estratégicos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Etapa 2:</strong> Tabla de 6 sistemas con justificación específica al contexto de aviación</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Etapa 3:</strong> Información necesaria + 3 escenarios con variables + sistema utilizado + riesgos de decidir sin datos</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Etapa 4:</strong> Alternativa elegida (A, B o C) + indicador de éxito + 3 argumentos de defensa</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#8B5CF6">Presentación de 3 minutos</strong> con defensa ante una pregunta</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Integrar — reservas, ocupación en tiempo real, estado de flota, disponibilidad de tripulación, costos de combustible y derechos aeroportuarios. Problemas de desconexión: overbooking, retrasos por descoordinación, ingresos perdidos por asientos vacíos no revendidos a tiempo. Indicadores estratégicos: load factor (% ocupación), CASK (costo por asiento-km), RASK (ingreso por asiento-km), puntualidad, Net Promoter Score.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Variables clave: demanda estimada (estudio de mercado), competidores en la ruta, costos operativos por vuelo ($45.000-80.000 según distancia), precio ticket promedio del mercado, frecuencia mínima viable. Pesimista: 55% ocp → pérdida probable. Base: 72% ocp → break-even aprox. mes 14. Optimista: 85% ocp → rentable desde mes 9. Sistema = DSS. Riesgo sin datos: inversión de $1.2M sin garantía de recuperación.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: B suele ser la alternativa de menor riesgo a corto plazo — usar infraestructura existente, menor inversión, retorno más rápido. A tiene mayor potencial pero mayor riesgo. C puede erosionar ingresos si la demanda no es elástica al precio. Indicador B = ingreso incremental / costo incremental de las frecuencias adicionales.</div>
+      </div>
+    </div>
+    <div id="mission-6" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#062830;border:1px solid #06B6D444;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#06B6D4;flex-shrink:0">G6</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 6 — Sabor Urbano</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La cadena de restaurantes <strong style="color:#06B6D4">Sabor Urbano</strong> posee nueve locales y busca mejorar la gestión de sus operaciones y usar mejor la información disponible. Cada restaurante utiliza algunos procedimientos diferentes, lo que dificulta la estandarización y la comparación de desempeño. La gerencia recibe información de ventas pero necesita entender mejor por qué unos locales son más rentables que otros. Su grupo actúa como <strong style="color:#06B6D4">consultores de operaciones gastronómicas</strong> contratados para diagnosticar, identificar sistemas, resolver una crisis de rentabilidad y recomendar una decisión comercial. El taller tiene <strong style="color:#06B6D4">4 etapas</strong> — respóndanlas en orden.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#06B6D4;font-weight:700">Sabor Urbano</span></div><div><span style="color:var(--muted)">Locales:</span> <span style="color:#06B6D4;font-weight:700">9</span></div><div><span style="color:var(--muted)">Pedidos diarios:</span> <span style="color:#06B6D4;font-weight:700">6.500</span></div><div><span style="color:var(--muted)">Empleados totales:</span> <span style="color:#06B6D4;font-weight:700">280</span></div><div><span style="color:var(--muted)">Problema detectado:</span> <span style="color:#06B6D4;font-weight:700">un local tiene ventas similares a los demás pero rentabilidad 20% menor</span></div><div><span style="color:var(--muted)">Decisión pendiente:</span> <span style="color:#06B6D4;font-weight:700">cómo responder ante la caída de rentabilidad</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #06B6D444;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#062830;border-bottom:1px solid #06B6D444">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#06B6D4">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#062830;color:#06B6D4;border:1px solid #06B6D444;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#06B6D4">ETAPA 1 — Diagnóstico:</strong> Cada restaurante usa procedimientos diferentes, la gerencia recibe datos de ventas pero no puede identificar fácilmente por qué un local es menos rentable. Identifique <strong style="color:#06B6D4">3 problemas de información concretos</strong>. ¿Qué información debería recopilarse de todos los locales de forma estandarizada? ¿Qué conocimientos operativos deberían compartirse entre todos los restaurantes?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#062830;color:#06B6D4;border:1px solid #06B6D444;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#06B6D4">ETAPA 2 — Identificación de sistemas:</strong> (a) ¿Qué sistema registra cada pedido y pago en caja? (b) ¿Qué sistema automatiza documentos, pedidos a proveedores y comunicación entre locales? (c) ¿Qué sistema conserva recetas estandarizadas, procedimientos de atención y protocolos de higiene? (d) ¿Qué sistema genera reportes mensuales de ventas, costos y rentabilidad por local? (e) ¿Qué sistema analiza el impacto de cambiar los precios de los platos más vendidos? (f) ¿Qué sistema permite a los dueños observar la rentabilidad general de la cadena y decidir si abrir nuevos locales?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#062830;color:#06B6D4;border:1px solid #06B6D444;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#06B6D4">ETAPA 3 — Crisis de rentabilidad:</strong> Uno de los restaurantes tiene ventas similares a los otros locales pero su rentabilidad es 20% menor. ¿Qué información analizaría para encontrar la causa? ¿Qué posibles causas investigaría? ¿Qué sistema utilizaría para comparar alternativas de solución? ¿Qué decisión podría tomar?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#062830;color:#06B6D4;border:1px solid #06B6D444;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px"><strong style="color:#06B6D4">ETAPA 4 — Decisión comercial:</strong> La gerencia de Sabor Urbano debe elegir entre: <strong style="color:#06B6D4">(A)</strong> Aumentar precios un 8% en todos los locales, <strong style="color:#06B6D4">(B)</strong> Reducir costos estandarizando compras y porciones, <strong style="color:#06B6D4">(C)</strong> Crear promociones en horarios de baja demanda, <strong style="color:#06B6D4">(D)</strong> Cambiar algunos productos del menú por otros de mayor margen. ¿Qué alternativa elegiría para resolver la crisis del local problemático? ¿Cómo evaluaría el impacto antes de implementarla? Prepare 3 minutos de defensa.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#06B6D4">Etapa 1:</strong> 3 problemas de información + datos a estandarizar en todos los locales + conocimiento a compartir</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#06B6D4">Etapa 2:</strong> Tabla de 6 sistemas con justificación específica al contexto de restaurantes</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#06B6D4">Etapa 3:</strong> Información analizada + causas posibles investigadas + sistema utilizado + decisión propuesta</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#06B6D4">Etapa 4:</strong> Alternativa elegida (A, B, C o D) + método de evaluación del impacto + 3 argumentos de defensa</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span><strong style="color:#06B6D4">Presentación de 3 minutos</strong> con defensa ante una pregunta de otro grupo</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">E1: Problemas — procedimientos distintos por local (impide comparación), datos de ventas sin desglose de costos por ítem (no se sabe qué es rentable), conocimiento operativo en personas no en sistemas. Datos estandarizados: ventas/pedido/local/hora, costo de insumos/plato, desperdicio diario (kg), horas trabajadas vs. pedidos. Conocimiento: recetas con gramajes exactos, tiempos de preparación, protocolos de higiene, técnicas de atención.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E3: Info clave: comparar costo de insumos/ventas (%), desperdicio/ventas (%), personal/pedido entre el local problemático y los mejores. Causas: compras a proveedores más caros, porciones más grandes sin estandarizar, mayor desperdicio, personal excedente, precios de venta más bajos por decisión local. Sistema: MIS para diagnóstico comparativo + DSS para evaluar alternativas de corrección. Decisión: depende de la causa raíz identificada.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">E4: B es la más sostenible si la causa es de costos internos. A puede funcionar si la demanda no es muy elástica al precio. C resuelve problema de ocupación pero no de rentabilidad por plato. D es válida si hay platos con margen negativo que siguen en carta por tradición. El DSS simula el impacto de cada opción antes de implementar. Indicador de éxito = margen de rentabilidad del local problemático a 90 días.</div>
+      </div>
+    </div>
+
+  <div style="margin-top:40px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px">// Acceso docente — guía de respuestas</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <input id="sol-in" type="password" placeholder="clave docente" style="background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:7px;outline:none;letter-spacing:.1em;width:200px" onkeydown="if(event.key==='Enter')chkSol()">
+      <button onclick="chkSol()" style="background:#052e16;border:1px solid rgba(74,222,128,.3);color:#4ADE80;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer">Ver guía</button>
+    </div>
+  </div>
+
+  <div id="global-sol" class="global-solution">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;display:flex;align-items:center;gap:10px">// Guía de respuestas — Vista docente<span style="flex:1;height:1px;background:rgba(74,222,128,.2);display:block"></span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:10px">G1 — Universidad Nova · Clave: <span style="background:#0c1d3f;padding:2px 8px;border-radius:4px">universidadnova</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Problemas esperados — registro manual de operaciones, documentación dispersa sin acceso centralizado, reportes lentos que llegan tarde a los directivos. Consecuencias: errores en registros, pérdida de información, decisiones tardías y poco fundamentadas. Info para rectoría: matrículas activas, ingresos, deserción, desempeño académico, costos operativos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS — registra transacciones operativas. (b) OAS — automatiza oficina. (c) KMS — conserva conocimiento. (d) MIS — reportes para administradores. (e) DSS — análisis de escenarios. (f) ESS/EIS — visión estratégica de alta dirección.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Problema = dependencia del conocimiento individual, falta de documentación institucional. Sistema = KMS. Acciones: 1. Documentar inmediatamente todos los procesos críticos con sus responsables. 2. Crear repositorio digital centralizado con acceso por roles. 3. Establecer protocolo de traspaso obligatorio antes de cualquier desvinculación.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: Cualquier alternativa es válida si el diagnóstico es coherente. A=TPS si el problema principal son las operaciones manuales. B=DSS si la urgencia es mejorar decisiones. C=KMS si la crisis de conocimiento es el riesgo más crítico.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#10B981;margin-bottom:10px">G2 — Hospital Vida · Clave: <span style="background:#052e16;padding:2px 8px;border-radius:4px">hospitalvida</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Problemas — registros de pacientes no centralizados, procedimientos solo en la memoria de empleados expertos, reportes de desempeño manuales y lentos. Riesgos: errores en medicación o diagnóstico, pérdida de historial, decisiones tardías en crisis. Info dirección: pacientes atendidos/día, ocupación de camas, costos por área, tiempos de atención, ingresos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Info necesaria — demanda actual vs. capacidad, costos de cada alternativa, disponibilidad de personal, tiempos de espera actuales. Sistema = DSS para comparar escenarios. Consecuencias sin datos: sobrecosto por exceso de contratación o colapso por insuficiencia de recursos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: A=TPS si el problema central es el registro. B=DSS si la urgencia es mejorar decisiones en crisis. C=KMS si la pérdida de conocimiento clínico es el riesgo más crítico. Cualquier alternativa válida con argumentación coherente con el diagnóstico.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:10px">G3 — MaxMarket · Clave: <span style="background:#2d2208;padding:2px 8px;border-radius:4px">maxmarket</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Problemas — falta de integración entre sucursales, reportes manuales tardíos, procedimientos no estandarizados. Info diaria: ventas por sucursal/categoría/producto, inventario con alertas de stock mínimo, ingresos vs. presupuesto. Conocimiento: procedimientos de inventario, protocolos de atención, gestión de mermas.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Info: ventas históricas de la sucursal, comparación con otras sucursales similares, análisis por categoría, datos de competidores cercanos. Sistema: MIS para diagnóstico + DSS para alternativas. Alternativas: promoción local, renovación de layout, ampliación de horarios, mejora de categorías específicas. Recomendación: debe basarse en el análisis, no en suposición.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: Cálculo clave — con margen del 22% y descuento del 10%, el volumen debe aumentar ~45% para mantener ganancia. Alternativas: descuento selectivo en productos de alta elasticidad, programa de fidelización, promoción por volumen. Sistema = DSS.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EF4444;margin-bottom:10px">G4 — Banco Capital · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">bancocapital</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Operativo — depósitos, retiros, transferencias, pagos de crédito (cada transacción). Gerencial — volumen por sucursal, mora, créditos aprobados/rechazados, ingresos por producto. Estratégico — rentabilidad por segmento de cliente, participación de mercado, proyección de crecimiento de cartera.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Info urgente: cuántos clientes han consultado sobre salida en los últimos 7 días, comparativo de tasas propio vs. competidor, costo de retención vs. costo de adquisición de nuevo cliente. Alternativas: reducir tasas (afecta margen), beneficios exclusivos (menor costo), nuevo producto (más tiempo para desarrollar). Sistema = DSS. Riesgo de error: guerra de precios insostenible o pérdida de clientes por inacción.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: Cualquier alternativa válida con indicador coherente. B suele ser la más eficiente en costo a corto plazo. Indicador A = retención %. Indicador B = churn rate (tasa de abandono). Indicador C = nuevos clientes / costo de adquisición.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#8B5CF6;margin-bottom:10px">G5 — AeroAndes · Clave: <span style="background:#1e1340;padding:2px 8px;border-radius:4px">aeroandes</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Integrar — reservas, ocupación en tiempo real, estado de flota, disponibilidad de tripulación, costos de combustible y derechos aeroportuarios. Problemas de desconexión: overbooking, retrasos por descoordinación, ingresos perdidos por asientos vacíos no revendidos a tiempo. Indicadores estratégicos: load factor (% ocupación), CASK (costo por asiento-km), RASK (ingreso por asiento-km), puntualidad, Net Promoter Score.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Variables clave: demanda estimada (estudio de mercado), competidores en la ruta, costos operativos por vuelo ($45.000-80.000 según distancia), precio ticket promedio del mercado, frecuencia mínima viable. Pesimista: 55% ocp → pérdida probable. Base: 72% ocp → break-even aprox. mes 14. Optimista: 85% ocp → rentable desde mes 9. Sistema = DSS. Riesgo sin datos: inversión de $1.2M sin garantía de recuperación.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: B suele ser la alternativa de menor riesgo a corto plazo — usar infraestructura existente, menor inversión, retorno más rápido. A tiene mayor potencial pero mayor riesgo. C puede erosionar ingresos si la demanda no es elástica al precio. Indicador B = ingreso incremental / costo incremental de las frecuencias adicionales.</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#06B6D4;margin-bottom:10px">G6 — Sabor Urbano · Clave: <span style="background:#062830;padding:2px 8px;border-radius:4px">saborurbano</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E1: Problemas — procedimientos distintos por local (impide comparación), datos de ventas sin desglose de costos por ítem (no se sabe qué es rentable), conocimiento operativo en personas no en sistemas. Datos estandarizados: ventas/pedido/local/hora, costo de insumos/plato, desperdicio diario (kg), horas trabajadas vs. pedidos. Conocimiento: recetas con gramajes exactos, tiempos de preparación, protocolos de higiene, técnicas de atención.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E2: (a) TPS. (b) OAS. (c) KMS. (d) MIS. (e) DSS. (f) ESS/EIS.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E3: Info clave: comparar costo de insumos/ventas (%), desperdicio/ventas (%), personal/pedido entre el local problemático y los mejores. Causas: compras a proveedores más caros, porciones más grandes sin estandarizar, mayor desperdicio, personal excedente, precios de venta más bajos por decisión local. Sistema: MIS para diagnóstico comparativo + DSS para evaluar alternativas de corrección. Decisión: depende de la causa raíz identificada.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">E4: B es la más sostenible si la causa es de costos internos. A puede funcionar si la demanda no es muy elástica al precio. C resuelve problema de ocupación pero no de rentabilidad por plato. D es válida si hay platos con margen negativo que siguen en carta por tradición. El DSS simula el impacto de cada opción antes de implementar. Indicador de éxito = margen de rentabilidad del local problemático a 90 días.</div>
+      </div>
+  </div>
+
+</div>
+
+<footer>
+  Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>SIG-T01 — Taller Semana 1</span>
+</footer>
+
+<script>
+const CLAVES={1:"universidadnova",2:"hospitalvida",3:"maxmarket",4:"bancocapital",5:"aeroandes",6:"saborurbano"};
+const CLAVE_DOC="docentepass2025";
+let secs=2400,run=false,iv;
+function fmt(s){const m=Math.floor(s/60),sc=s%60;return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc}
+document.getElementById('td').textContent=fmt(secs);
+function toggleTimer(){run=!run;const b=document.getElementById('tbtn');
+  if(run){b.textContent='⏸ pausar';b.classList.add('on');
+    iv=setInterval(()=>{if(secs>0){secs--;document.getElementById('td').textContent=fmt(secs);}
+      else{clearInterval(iv);run=false;b.textContent='▶ iniciar';b.classList.remove('on');document.getElementById('td').style.color='#FF7B72';}
+    },1000);
+  }else{clearInterval(iv);b.textContent='▶ iniciar';b.classList.remove('on');}
+}
+function resetTimer(){clearInterval(iv);run=false;secs=2400;
+  document.getElementById('td').textContent=fmt(secs);document.getElementById('td').style.color='';
+  const b=document.getElementById('tbtn');b.textContent='▶ iniciar';b.classList.remove('on');}
+function sel(n){
+  [1,2,3,4,5,6].forEach(i=>{
+    document.getElementById('access-'+i).classList.remove('vis');
+    document.getElementById('mission-'+i).classList.remove('vis');
+  });
+  document.getElementById('access-'+n).classList.add('vis');
+  document.getElementById('access-'+n).scrollIntoView({behavior:'smooth',block:'center'});
+}
+function ck(n){
+  const v=document.getElementById('ki-'+n).value.trim();
+  if(v===CLAVES[n]){
+    document.getElementById('access-'+n).classList.remove('vis');
+    document.getElementById('mission-'+n).classList.add('vis');
+    document.getElementById('mission-'+n).scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ke-'+n).style.display='none';
+  }else{
+    document.getElementById('ke-'+n).style.display='block';
+    document.getElementById('ki-'+n).style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('ki-'+n).style.borderColor='',1500);
+  }
+}
+function chkSol(){
+  if(document.getElementById('sol-in').value.trim()===CLAVE_DOC){
+    document.getElementById('global-sol').classList.add('vis');
+    document.getElementById('global-sol').scrollIntoView({behavior:'smooth'});
+  }else{
+    document.getElementById('sol-in').style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('sol-in').style.borderColor='',1500);
+  }
+}
+</script>
+</body></html>
