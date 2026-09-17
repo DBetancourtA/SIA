@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taller S1 — COM-ELEC-01 · Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#8B5CF6;--ac-dim:#1e1340;--ac2:#8B5CF6;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F0EEFF;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:52px 1.5rem 36px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px}
+.groups-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;cursor:pointer;transition:all .22s}
+.gcard:hover{transform:translateY(-3px)}
+.access-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:20px;text-align:center}
+.access-panel.vis{display:block}
+.key-input{background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;padding:10px 16px;border-radius:7px;width:220px;outline:none;letter-spacing:.12em;text-align:center;transition:border-color .2s}
+.key-input:focus{border-color:var(--ac)}
+.key-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:#FF7B72;margin-top:10px;display:none}
+.mission-panel{display:none}.mission-panel.vis{display:block}
+.nav-timer{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);display:flex;align-items:center;gap:6px}
+#td{font-size:16px;font-weight:700;min-width:58px}
+.tbtn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .2s}
+.tbtn:hover{color:var(--text)}.tbtn.on{background:#1e1340;color:var(--ac);border-color:#8B5CF644}
+.global-solution{display:none;background:var(--surface);border:1px solid rgba(74,222,128,.3);border-radius:var(--radius);padding:26px;margin-top:32px}
+.global-solution.vis{display:block}
+@media(max-width:640px){.groups-grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>🛒</span>
+    COM-ELEC-01 <span class="sep">/</span><span class="dim">taller-semana-1</span>
+  </div>
+  <div class="nav-timer">⏱ <span id="td">40:00</span>
+    <button class="tbtn" id="tbtn" onclick="toggleTimer()">▶ iniciar</button>
+    <button class="tbtn" onclick="resetTimer()">↺</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+    <a class="nav-back" href="COM-ELEC-01.html">↩ Semana 1</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1;max-width:860px;margin:0 auto;padding:48px 1.5rem 36px;text-align:center">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+    Semana 1 · Taller grupal · COM-ELEC-01
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px">
+    <span style="color:var(--muted)">Diseñe y evalúe un negocio de comercio electrónico</span>
+  </h1>
+  <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;line-height:1.7">Los estudiantes trabajarán en grupos para analizar y diseñar una solución de comercio electrónico para una empresa ficticia. Cada grupo deberá definir el tipo de comercio electrónico, diseñar la interfaz de su tienda, proponer métodos de pago, identificar mecanismos de seguridad, analizar aspectos legales, resolver una controversia, plantear una estrategia de marketing digital y considerar la propiedad intelectual. Al finalizar, cada grupo socializará su propuesta ante la clase y responderá preguntas de sus compañeros.</p>
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">7 Grupos</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">40 minutos</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">// Selecciona tu grupo<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+  <div class="groups-grid">
+    <div class="gcard" onclick="sel(1)" style="border-color:#3B82F644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#3B82F6">G1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 1</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Tienda de Tecnología TecnoPlus</div>
+      </div><div class="gcard" onclick="sel(2)" style="border-color:#10B98144">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#10B981">G2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 2</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Mercado Local Online</div>
+      </div><div class="gcard" onclick="sel(3)" style="border-color:#F59E0B44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#F59E0B">G3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 3</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">PagoSeguro</div>
+      </div><div class="gcard" onclick="sel(4)" style="border-color:#EF444444">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EF4444">G4</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 4</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Moda Urbana y la Ley</div>
+      </div><div class="gcard" onclick="sel(5)" style="border-color:#8B5CF644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#8B5CF6">G5</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 5</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Marketing Digital Express</div>
+      </div><div class="gcard" onclick="sel(6)" style="border-color:#EC489944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EC4899">G6</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 6</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Controversias Online</div>
+      </div><div class="gcard" onclick="sel(7)" style="border-color:#8B5CF644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#8B5CF6">G7</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 7</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Dinámica de socialización final</div>
+      </div>
+  </div>
+
+  
+    <div id="access-1" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#3B82F6;margin-bottom:6px">🔒 Grupo 1 — Tienda de Tecnología TecnoPlus</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(1)">
+        <button style="background:#3B82F6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(1)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-1">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-2" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#10B981;margin-bottom:6px">🔒 Grupo 2 — Mercado Local Online</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(2)">
+        <button style="background:#10B981;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(2)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-2">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-3" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#F59E0B;margin-bottom:6px">🔒 Grupo 3 — PagoSeguro</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(3)">
+        <button style="background:#F59E0B;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(3)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-3">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-4" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;margin-bottom:6px">🔒 Grupo 4 — Moda Urbana y la Ley</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(4)">
+        <button style="background:#EF4444;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(4)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-4">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-5" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#8B5CF6;margin-bottom:6px">🔒 Grupo 5 — Marketing Digital Express</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(5)">
+        <button style="background:#8B5CF6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(5)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-5">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-6" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EC4899;margin-bottom:6px">🔒 Grupo 6 — Controversias Online</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-6" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(6)">
+        <button style="background:#EC4899;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(6)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-6">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-7" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#8B5CF6;margin-bottom:6px">🔒 Grupo 7 — Dinámica de socialización final</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-7" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(7)">
+        <button style="background:#8B5CF6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(7)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-7">⚠ Clave incorrecta</div>
+    </div>
+  
+    <div id="mission-1" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#0c1d3f;border:1px solid #3B82F644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#3B82F6;flex-shrink:0">G1</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 1 — Tienda de Tecnología TecnoPlus</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#3B82F6">TecnoPlus S.A.</strong> es una empresa que actualmente vende accesorios tecnológicos de manera presencial y desea comenzar a vender mediante Internet. La gerencia quiere conocer qué tipo de comercio electrónico debería implementar y cómo debería estructurar su tienda virtual para generar confianza en los clientes.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#3B82F6;font-weight:700">TecnoPlus S.A.</span></div><div><span style="color:var(--muted)">Productos:</span> <span style="color:#3B82F6;font-weight:700">Computadores, teclados, mouse, audífonos y accesorios</span></div><div><span style="color:var(--muted)">Público objetivo:</span> <span style="color:#3B82F6;font-weight:700">Jóvenes y adultos de 18 a 40 años</span></div><div><span style="color:var(--muted)">Canal actual:</span> <span style="color:#3B82F6;font-weight:700">Tienda física</span></div><div><span style="color:var(--muted)">Nuevo canal:</span> <span style="color:#3B82F6;font-weight:700">Sitio web de comercio electrónico</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#3B82F6;font-weight:700">Modelo de comercio electrónico e interfaz del sitio</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #3B82F644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#0c1d3f;border-bottom:1px solid #3B82F644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#3B82F6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué tipo de comercio electrónico debería utilizar TecnoPlus y por qué?</div><div style="margin-top:6px"><p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:4px">@pista: Analicen quién vende, quién compra y cuál es la relación entre ambas partes.</p></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué elementos debería incluir la interfaz de la tienda virtual para facilitar la compra y generar confianza?</div><div style="margin-top:6px"><p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:4px">@pista: Consideren navegación, productos, precios, carrito, información empresarial y contacto.</p></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Diseñen la estructura de la página principal de TecnoPlus. ¿Qué información debería visualizar primero un usuario?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Propongan un proceso de compra desde que el usuario ingresa al sitio hasta que recibe la confirmación del pedido.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué características debería tener la interfaz para mejorar la experiencia del usuario y reducir el abandono de compras?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: El modelo principal esperado es B2C, debido a que una empresa comercializa productos directamente a consumidores finales.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Se espera que incluyan menú de navegación, buscador, categorías, fotografías, descripción, precio, disponibilidad, carrito, métodos de pago, información de contacto, políticas y elementos que generen confianza.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: La página debería priorizar identidad de la empresa, categorías principales, productos destacados, promociones y acceso visible al carrito y proceso de compra.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: Flujo esperado: ingreso al sitio → búsqueda del producto → selección → carrito → identificación/datos de envío → método de pago → confirmación → seguimiento del pedido.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: La interfaz debe ser clara, sencilla, responsive, rápida y consistente, reduciendo pasos innecesarios durante la compra.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-2" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#052e16;border:1px solid #10B98144;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#10B981;flex-shrink:0">G2</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 2 — Mercado Local Online</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#10B981">Mercado Local Online</strong> quiere desarrollar una plataforma que permita a pequeños comerciantes publicar sus productos y venderlos directamente a consumidores. La plataforma no será propietaria de los productos: únicamente conectará compradores y vendedores.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#10B981;font-weight:700">Mercado Local Online</span></div><div><span style="color:var(--muted)">Modelo:</span> <span style="color:#10B981;font-weight:700">Plataforma intermediaria</span></div><div><span style="color:var(--muted)">Vendedores:</span> <span style="color:#10B981;font-weight:700">150 pequeños negocios</span></div><div><span style="color:var(--muted)">Usuarios potenciales:</span> <span style="color:#10B981;font-weight:700">5.000 compradores</span></div><div><span style="color:var(--muted)">Productos:</span> <span style="color:#10B981;font-weight:700">Ropa, artesanías, alimentos empacados y productos para el hogar</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#10B981;font-weight:700">Relación entre participantes del comercio electrónico</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #10B98144;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#052e16;border-bottom:1px solid #10B98144">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#10B981">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué tipo o tipos de comercio electrónico intervienen en este modelo?</div><div style="margin-top:6px"><p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:4px">@pista: Identifiquen por separado la relación plataforma-vendedor y vendedor-consumidor.</p></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué funcionalidades debería tener el marketplace para administrar vendedores y compradores?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué información debería solicitarse a los vendedores antes de permitirles publicar productos?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Un comprador afirma que recibió un producto diferente al anunciado. ¿Cómo debería actuar la plataforma?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué reglas debería establecer Mercado Local Online para reducir conflictos entre compradores y vendedores?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: El modelo principal es un marketplace que facilita relaciones B2C o C2C dependiendo de quiénes sean los vendedores. La plataforma actúa como intermediaria.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Se esperan funciones como registro, perfiles, catálogo, búsqueda, carrito, pagos, calificaciones, gestión de pedidos, comunicación y resolución de conflictos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: Datos de identificación del vendedor, información comercial, descripción del producto, precio, fotografías, disponibilidad y condiciones de venta.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: La plataforma debería revisar la evidencia, consultar al vendedor, verificar las condiciones publicadas y aplicar sus políticas de devolución o resolución de conflictos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: Deben existir términos y condiciones, políticas de devolución, reglas de publicación, mecanismos de reclamo y procedimientos para resolver controversias.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-3" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#2d2208;border:1px solid #F59E0B44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#F59E0B;flex-shrink:0">G3</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 3 — PagoSeguro</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#F59E0B">PagoSeguro</strong> está desarrollando el sistema de pagos de una nueva tienda virtual. La empresa quiere ofrecer tarjetas de crédito, transferencias y billeteras digitales, pero necesita reducir los riesgos asociados con el manejo de información financiera.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#F59E0B;font-weight:700">PagoSeguro</span></div><div><span style="color:var(--muted)">Métodos propuestos:</span> <span style="color:#F59E0B;font-weight:700">Tarjeta, transferencia y billetera digital</span></div><div><span style="color:var(--muted)">Información sensible:</span> <span style="color:#F59E0B;font-weight:700">Datos personales y financieros</span></div><div><span style="color:var(--muted)">Amenazas:</span> <span style="color:#F59E0B;font-weight:700">Robo de credenciales, interceptación de información y fraude</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#F59E0B;font-weight:700">Seguridad de las transacciones</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #F59E0B44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#2d2208;border-bottom:1px solid #F59E0B44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F59E0B">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué riesgos de seguridad existen durante una compra electrónica?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué información debería protegerse mediante mecanismos de cifrado?</div><div style="margin-top:6px"><p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:4px">@pista: Piensen en información personal, credenciales y datos relacionados con la transacción.</p></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué función cumplen HTTPS y los certificados digitales en una tienda electrónica?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿En qué situaciones podría utilizarse una firma digital y qué ventajas ofrece?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Diseñen un proceso seguro de pago para un cliente que compra un producto por Internet.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: Entre los riesgos se encuentran phishing, robo de credenciales, interceptación de comunicaciones, fraude, malware y accesos no autorizados.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Deben protegerse datos personales, credenciales, información de autenticación y cualquier información sensible relacionada con la operación.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: HTTPS protege la comunicación entre el navegador y el servidor mediante TLS. Los certificados digitales permiten autenticar la identidad del sitio y establecer una conexión segura.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: Una firma digital permite verificar la identidad del firmante y detectar modificaciones posteriores del documento, aportando autenticidad e integridad.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: Flujo esperado: acceso al sitio seguro → autenticación → selección del producto → confirmación del pedido → conexión segura con el medio de pago → autenticación de la operación → confirmación → registro de la transacción.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-4" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EF444444;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EF4444;flex-shrink:0">G4</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 4 — Moda Urbana y la Ley</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#EF4444">Moda Urbana S.A.</strong> lanzó una tienda virtual utilizando fotografías encontradas en Internet para mostrar sus productos. Después de algunas semanas, otra empresa reclama que varias fotografías y textos fueron copiados de su sitio web. Además, algunos clientes solicitan información sobre el tratamiento de sus datos personales y las condiciones de devolución.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#EF4444;font-weight:700">Moda Urbana S.A.</span></div><div><span style="color:var(--muted)">Contenido utilizado:</span> <span style="color:#EF4444;font-weight:700">Fotografías, textos y logotipo</span></div><div><span style="color:var(--muted)">Clientes registrados:</span> <span style="color:#EF4444;font-weight:700">2.000</span></div><div><span style="color:var(--muted)">Información almacenada:</span> <span style="color:#EF4444;font-weight:700">Nombre, teléfono, dirección y correo electrónico</span></div><div><span style="color:var(--muted)">Problemas:</span> <span style="color:#EF4444;font-weight:700">Propiedad intelectual y protección de datos</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#EF4444;font-weight:700">Cumplimiento legal</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EF444444;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EF444444">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EF4444">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué problemas legales podrían existir en el uso de fotografías y textos obtenidos de Internet?</div><div style="margin-top:6px"><p style="font-size:13px;color:var(--muted);line-height:1.7;margin-top:4px">@pista: Que un contenido esté disponible públicamente no significa necesariamente que pueda utilizarse libremente.</p></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué información debería contener una política de privacidad?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué elementos deberían incluir los términos y condiciones de la tienda?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Cómo debería responder Moda Urbana ante el reclamo por las fotografías?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Propongan un conjunto de medidas para evitar futuros problemas relacionados con propiedad intelectual y datos personales.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: Las fotografías, textos, diseños y otros contenidos pueden estar protegidos por derechos de autor u otros derechos de propiedad intelectual.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Debe explicar qué datos se recopilan, para qué se utilizan, cómo se protegen, durante cuánto tiempo se conservan y cuáles son los mecanismos disponibles para ejercer los derechos correspondientes, según la legislación aplicable.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: Deben contemplar condiciones de compra, pagos, entregas, devoluciones, responsabilidades, privacidad y mecanismos de atención o reclamo.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: La empresa debería revisar la procedencia y licencia de las imágenes, retirar temporalmente el contenido cuestionado si corresponde y buscar una solución conforme a la legislación y los derechos del titular.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: Utilizar contenido propio o correctamente licenciado, mantener registros de autorizaciones, establecer políticas internas y gestionar adecuadamente los datos personales.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-5" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1e1340;border:1px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#8B5CF6;flex-shrink:0">G5</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 5 — Marketing Digital Express</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#8B5CF6">Marketing Digital Express</strong> tiene una tienda electrónica que recibe visitas, pero muy pocas personas terminan comprando. La empresa necesita desarrollar una estrategia de e-marketing y web marketing que permita atraer usuarios y convertir visitas en clientes.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#8B5CF6;font-weight:700">Marketing Digital Express</span></div><div><span style="color:var(--muted)">Visitas mensuales:</span> <span style="color:#8B5CF6;font-weight:700">10.000</span></div><div><span style="color:var(--muted)">Compras mensuales:</span> <span style="color:#8B5CF6;font-weight:700">150</span></div><div><span style="color:var(--muted)">Redes utilizadas:</span> <span style="color:#8B5CF6;font-weight:700">Instagram, Facebook y TikTok</span></div><div><span style="color:var(--muted)">Base de correos:</span> <span style="color:#8B5CF6;font-weight:700">3.000 usuarios</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#8B5CF6;font-weight:700">Conversión de visitantes en clientes</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #8B5CF644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1e1340;border-bottom:1px solid #8B5CF644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8B5CF6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué canales de marketing digital utilizarían para atraer clientes y por qué?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué tipo de contenido publicarían en redes sociales?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Diseñen una campaña de email marketing para promocionar un producto.</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué cambios realizarían en la página web para mejorar la conversión?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué indicadores deberían analizar para determinar si la estrategia de marketing está funcionando?</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: Pueden utilizar redes sociales, SEO, email marketing, publicidad digital y contenidos, justificando cada canal según el público objetivo.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Contenido educativo, demostraciones de productos, testimonios, promociones y contenido audiovisual relacionado con los productos.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: Debe incluir asunto, propuesta de valor, contenido relevante, llamada a la acción y mecanismos adecuados de consentimiento y gestión de comunicaciones.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: Mejorar velocidad, navegación, claridad de la propuesta de valor, fotografías, llamadas a la acción, información del producto, confianza y facilidad del proceso de compra.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: Visitas, tasa de conversión, clics, abandono del carrito, costo de adquisición, ventas generadas y retorno de las campañas.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-6" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EC489944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EC4899;flex-shrink:0">G6</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 6 — Controversias Online</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7"><strong style="color:#EC4899">CompraFácil</strong> es una tienda electrónica que ha comenzado a recibir reclamos. Un cliente asegura que pagó un producto y nunca lo recibió. Otro afirma que alguien utilizó sus datos para realizar una compra. Un tercero reclama que el producto recibido no coincide con la descripción publicada. La gerencia solicita al grupo desarrollar un protocolo para manejar controversias típicas del comercio electrónico.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#EC4899;font-weight:700">CompraFácil</span></div><div><span style="color:var(--muted)">Pedidos mensuales:</span> <span style="color:#EC4899;font-weight:700">3.500</span></div><div><span style="color:var(--muted)">Reclamos mensuales:</span> <span style="color:#EC4899;font-weight:700">85</span></div><div><span style="color:var(--muted)">Principales problemas:</span> <span style="color:#EC4899;font-weight:700">Entregas, pagos, productos y publicidad</span></div><div><span style="color:var(--muted)">Canales de atención:</span> <span style="color:#EC4899;font-weight:700">Correo, chat y teléfono</span></div><div><span style="color:var(--muted)">Variable principal:</span> <span style="color:#EC4899;font-weight:700">Resolución de controversias</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EC489944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EC489944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EC4899">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q1</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Cuáles son las controversias más frecuentes que podrían presentarse en un negocio electrónico?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q2</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Cómo debería actuar la empresa cuando un cliente afirma que realizó un pago pero el pedido nunca llegó?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q3</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">¿Qué procedimiento debería seguirse ante una posible transacción fraudulenta?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q4</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Un cliente demuestra que el producto recibido no coincide con la descripción de la página. ¿Qué solución propondrían?</div><div style="margin-top:6px"></div></div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:2px">Q5</div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">Diseñen un protocolo general para recibir, investigar y resolver reclamos de clientes.</div><div style="margin-top:6px"></div></div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: Pueden presentarse problemas relacionados con pagos, entregas, productos defectuosos o diferentes a lo anunciado, devoluciones, privacidad, publicidad y fraude.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: Verificar el pago, revisar el estado del pedido, comprobar información logística, contactar al cliente y determinar una solución según las condiciones de venta y la normativa aplicable.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: Verificar la operación, proteger la cuenta afectada, recopilar evidencias, contactar al proveedor de pago cuando corresponda y seguir el procedimiento establecido para operaciones no autorizadas.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q4: Revisar la evidencia y las condiciones ofrecidas, determinar si existe incumplimiento y aplicar la solución correspondiente, que podría incluir cambio, devolución o reembolso según el caso.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q5: Recepción del reclamo → registro → clasificación → recopilación de evidencias → investigación → comunicación con las partes → resolución → seguimiento y documentación.</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-7" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1e1340;border:1px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#8B5CF6;flex-shrink:0">G7</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 7 — Dinámica de socialización final</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 1</div>
+        </div>
+      </div>
+      
+      
+      
+      
+      
+    </div>
+
+  <div style="margin-top:40px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px">// Acceso docente — guía de respuestas</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <input id="sol-in" type="password" placeholder="clave docente" style="background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:7px;outline:none;letter-spacing:.1em;width:200px" onkeydown="if(event.key==='Enter')chkSol()">
+      <button onclick="chkSol()" style="background:#052e16;border:1px solid rgba(74,222,128,.3);color:#4ADE80;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer">Ver guía</button>
+    </div>
+  </div>
+
+  <div id="global-sol" class="global-solution">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;display:flex;align-items:center;gap:10px">// Guía de respuestas — Vista docente<span style="flex:1;height:1px;background:rgba(74,222,128,.2);display:block"></span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:10px">G1 — Tienda de Tecnología TecnoPlus · Clave: <span style="background:#0c1d3f;padding:2px 8px;border-radius:4px">tecno01</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: El modelo principal esperado es B2C, debido a que una empresa comercializa productos directamente a consumidores finales.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Se espera que incluyan menú de navegación, buscador, categorías, fotografías, descripción, precio, disponibilidad, carrito, métodos de pago, información de contacto, políticas y elementos que generen confianza.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: La página debería priorizar identidad de la empresa, categorías principales, productos destacados, promociones y acceso visible al carrito y proceso de compra.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: Flujo esperado: ingreso al sitio → búsqueda del producto → selección → carrito → identificación/datos de envío → método de pago → confirmación → seguimiento del pedido.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: La interfaz debe ser clara, sencilla, responsive, rápida y consistente, reduciendo pasos innecesarios durante la compra.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#10B981;margin-bottom:10px">G2 — Mercado Local Online · Clave: <span style="background:#052e16;padding:2px 8px;border-radius:4px">mercado02</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: El modelo principal es un marketplace que facilita relaciones B2C o C2C dependiendo de quiénes sean los vendedores. La plataforma actúa como intermediaria.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Se esperan funciones como registro, perfiles, catálogo, búsqueda, carrito, pagos, calificaciones, gestión de pedidos, comunicación y resolución de conflictos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: Datos de identificación del vendedor, información comercial, descripción del producto, precio, fotografías, disponibilidad y condiciones de venta.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: La plataforma debería revisar la evidencia, consultar al vendedor, verificar las condiciones publicadas y aplicar sus políticas de devolución o resolución de conflictos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: Deben existir términos y condiciones, políticas de devolución, reglas de publicación, mecanismos de reclamo y procedimientos para resolver controversias.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:10px">G3 — PagoSeguro · Clave: <span style="background:#2d2208;padding:2px 8px;border-radius:4px">pago03</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: Entre los riesgos se encuentran phishing, robo de credenciales, interceptación de comunicaciones, fraude, malware y accesos no autorizados.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Deben protegerse datos personales, credenciales, información de autenticación y cualquier información sensible relacionada con la operación.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: HTTPS protege la comunicación entre el navegador y el servidor mediante TLS. Los certificados digitales permiten autenticar la identidad del sitio y establecer una conexión segura.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: Una firma digital permite verificar la identidad del firmante y detectar modificaciones posteriores del documento, aportando autenticidad e integridad.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: Flujo esperado: acceso al sitio seguro → autenticación → selección del producto → confirmación del pedido → conexión segura con el medio de pago → autenticación de la operación → confirmación → registro de la transacción.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EF4444;margin-bottom:10px">G4 — Moda Urbana y la Ley · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">legal04</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: Las fotografías, textos, diseños y otros contenidos pueden estar protegidos por derechos de autor u otros derechos de propiedad intelectual.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Debe explicar qué datos se recopilan, para qué se utilizan, cómo se protegen, durante cuánto tiempo se conservan y cuáles son los mecanismos disponibles para ejercer los derechos correspondientes, según la legislación aplicable.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: Deben contemplar condiciones de compra, pagos, entregas, devoluciones, responsabilidades, privacidad y mecanismos de atención o reclamo.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: La empresa debería revisar la procedencia y licencia de las imágenes, retirar temporalmente el contenido cuestionado si corresponde y buscar una solución conforme a la legislación y los derechos del titular.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: Utilizar contenido propio o correctamente licenciado, mantener registros de autorizaciones, establecer políticas internas y gestionar adecuadamente los datos personales.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#8B5CF6;margin-bottom:10px">G5 — Marketing Digital Express · Clave: <span style="background:#1e1340;padding:2px 8px;border-radius:4px">market05</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: Pueden utilizar redes sociales, SEO, email marketing, publicidad digital y contenidos, justificando cada canal según el público objetivo.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Contenido educativo, demostraciones de productos, testimonios, promociones y contenido audiovisual relacionado con los productos.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: Debe incluir asunto, propuesta de valor, contenido relevante, llamada a la acción y mecanismos adecuados de consentimiento y gestión de comunicaciones.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: Mejorar velocidad, navegación, claridad de la propuesta de valor, fotografías, llamadas a la acción, información del producto, confianza y facilidad del proceso de compra.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: Visitas, tasa de conversión, clics, abandono del carrito, costo de adquisición, ventas generadas y retorno de las campañas.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EC4899;margin-bottom:10px">G6 — Controversias Online · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">contro06</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: Pueden presentarse problemas relacionados con pagos, entregas, productos defectuosos o diferentes a lo anunciado, devoluciones, privacidad, publicidad y fraude.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: Verificar el pago, revisar el estado del pedido, comprobar información logística, contactar al cliente y determinar una solución según las condiciones de venta y la normativa aplicable.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: Verificar la operación, proteger la cuenta afectada, recopilar evidencias, contactar al proveedor de pago cuando corresponda y seguir el procedimiento establecido para operaciones no autorizadas.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q4: Revisar la evidencia y las condiciones ofrecidas, determinar si existe incumplimiento y aplicar la solución correspondiente, que podría incluir cambio, devolución o reembolso según el caso.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q5: Recepción del reclamo → registro → clasificación → recopilación de evidencias → investigación → comunicación con las partes → resolución → seguimiento y documentación.</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div>
+  </div>
+
+</div>
+
+<footer>
+  Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>COM-ELEC-01 — Taller Semana 1</span>
+</footer>
+
+<script>
+const CLAVES={1:"tecno01",2:"mercado02",3:"pago03",4:"legal04",5:"market05",6:"contro06",7:"grupo7"};
+const CLAVE_DOC="docentepass2025";
+let secs=2400,run=false,iv;
+function fmt(s){const m=Math.floor(s/60),sc=s%60;return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc}
+document.getElementById('td').textContent=fmt(secs);
+function toggleTimer(){run=!run;const b=document.getElementById('tbtn');
+  if(run){b.textContent='⏸ pausar';b.classList.add('on');
+    iv=setInterval(()=>{if(secs>0){secs--;document.getElementById('td').textContent=fmt(secs);}
+      else{clearInterval(iv);run=false;b.textContent='▶ iniciar';b.classList.remove('on');document.getElementById('td').style.color='#FF7B72';}
+    },1000);
+  }else{clearInterval(iv);b.textContent='▶ iniciar';b.classList.remove('on');}
+}
+function resetTimer(){clearInterval(iv);run=false;secs=2400;
+  document.getElementById('td').textContent=fmt(secs);document.getElementById('td').style.color='';
+  const b=document.getElementById('tbtn');b.textContent='▶ iniciar';b.classList.remove('on');}
+function sel(n){
+  [1,2,3,4,5,6,7].forEach(i=>{
+    document.getElementById('access-'+i).classList.remove('vis');
+    document.getElementById('mission-'+i).classList.remove('vis');
+  });
+  document.getElementById('access-'+n).classList.add('vis');
+  document.getElementById('access-'+n).scrollIntoView({behavior:'smooth',block:'center'});
+}
+function ck(n){
+  const v=document.getElementById('ki-'+n).value.trim();
+  if(v===CLAVES[n]){
+    document.getElementById('access-'+n).classList.remove('vis');
+    document.getElementById('mission-'+n).classList.add('vis');
+    document.getElementById('mission-'+n).scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ke-'+n).style.display='none';
+  }else{
+    document.getElementById('ke-'+n).style.display='block';
+    document.getElementById('ki-'+n).style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('ki-'+n).style.borderColor='',1500);
+  }
+}
+function chkSol(){
+  if(document.getElementById('sol-in').value.trim()===CLAVE_DOC){
+    document.getElementById('global-sol').classList.add('vis');
+    document.getElementById('global-sol').scrollIntoView({behavior:'smooth'});
+  }else{
+    document.getElementById('sol-in').style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('sol-in').style.borderColor='',1500);
+  }
+}
+</script>
+</body></html>
